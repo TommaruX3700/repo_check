@@ -1,0 +1,28 @@
+{
+    "configuration" : [
+        {
+            "remote_repository" : "",
+            "local_folder_path" : "",
+            "refresh_time" : "1m",
+            "cmd" : [
+                {
+                    "exec_order": 0,
+                    "command" : "echo TEST FIRST COMMAND!\n "
+                },
+                {
+                    "exec_order": 5,
+                    "command" : "echo TEST LAST COMMAND!\n "
+                },
+                {
+                    "exec_order": 1,
+                    "command" : "echo TEST SECOND COMMAND!\n "
+                },
+                {
+                    "exec_order": 3,
+                    "command" : "echo TEST THIRD COMMAND!\n "
+                }
+            ]
+        }
+    ]
+
+}
