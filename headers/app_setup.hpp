@@ -23,20 +23,20 @@ class AppSetup
 {
 private:
     std::string configuration_file_path;
-    std::queue<std::string> commands_queue;
-    
-    NotificationServer* SetupNotificationServer();
+    std::queue<std::string>* commands_queue;
     
     OutputCodes IsConfigurationOk();
 
+    NotificationServer* SetupNotificationServer();
+   
     // Set&Get methods
     OutputCodes SetConfFilePath(std::string conf_path);
 
 public:
-    AppSetup();
+    AppSetup(std::string conf_path);
     ~AppSetup();
 
-    OutputCodes StartSetup(std::string conf_path);
+    OutputCodes StartSetup();
 
     // Set&Get methods
     std::string GetConfFilePath();

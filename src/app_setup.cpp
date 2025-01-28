@@ -1,19 +1,27 @@
 #include "app_setup.hpp"
 
-AppSetup::AppSetup(/* args */)
+AppSetup::AppSetup(std::string conf_path)
 {
+    configuration_file_path = conf_path;
+    commands_queue = new std::queue<std::string>;
 }
 
 AppSetup::~AppSetup()
 {
+    delete commands_queue;
 }
 
-NotificationServer* AppSetup::SetupNotificationServer()
+OutputCodes AppSetup::StartSetup()
+{
+    
+}
+
+OutputCodes AppSetup::IsConfigurationOk()
 {
 
 }
 
-OutputCodes AppSetup::IsConfigurationOk()
+NotificationServer* AppSetup::SetupNotificationServer()
 {
 
 }
@@ -23,10 +31,7 @@ OutputCodes AppSetup::SetConfFilePath(std::string conf_path)
 
 }
 
-OutputCodes AppSetup::StartSetup(std::string conf_path)
-{
 
-}
 
 std::string AppSetup::GetConfFilePath()
 {
