@@ -3,6 +3,7 @@
 #include "json.hpp"
 
 #include <iostream>
+#include <fstream>
 #include <string>
 #include <queue>
 
@@ -23,9 +24,12 @@ class AppSetup
 {
 private:
     std::string configuration_file_path;
+    nlohmann::json configuration;
+
+    std::string log_file_path, mqtt_server_address, refresh_time;
+    std::map<int, std::string> notification_levels;
     std::queue<std::string>* commands_queue;
-    
-    OutputCodes IsConfigurationOk();
+    NotificationServer* notification_server;
 
     NotificationServer* SetupNotificationServer();
    
@@ -40,7 +44,7 @@ public:
 
     // Set&Get methods
     std::string GetConfFilePath();
-    std::queue<std::string> GetCmdQueue();
+    std::queue<std::string>* GetCmdQueue();
     
 };
 
