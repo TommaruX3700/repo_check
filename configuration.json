@@ -7,7 +7,7 @@
             "cmd" : [
                 {
                     "exec_order": 0,
-                    "command" : "echo TEST FIRST COMMAND!\n "
+                    "command" : "echo AAAAAAAAAAATEST FIRST COMMAND!\n "
                 },
                 {
                     "exec_order": 5,
