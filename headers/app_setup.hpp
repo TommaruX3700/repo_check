@@ -8,8 +8,6 @@
 #include <queue>
 #include <chrono>
 #include <filesystem>
-#include <regex>
-
 
 // Setup class for whole project startup
 
