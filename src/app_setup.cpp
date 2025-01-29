@@ -26,6 +26,9 @@ AppSetup::~AppSetup()
 
 OutputCodes AppSetup::StartSetup()
 {
+    // Set application startup time    
+    start_time = std::format("{:%T_%F}", std::chrono::system_clock::now());
+
     std::ifstream conf_file(configuration_file_path);
     if (!conf_file.is_open())
     {
@@ -47,7 +50,7 @@ OutputCodes AppSetup::StartSetup()
     configuration = conf_json;
 
     // Read elements from configuration and setup private variables
-    if (GetConfiguration() == ERROR || GetConfiguration() == CRITICAL_ERROR)
+    if (GetAndApplyConfiguration() == ERROR || GetAndApplyConfiguration() == CRITICAL_ERROR)
     {
         std::cout << "Check configuration file format. . ." << std::endl;
         return ERROR;
@@ -61,36 +64,33 @@ OutputCodes AppSetup::StartSetup()
         return ERROR;
     }
 
-    // Set application startup time
-    auto now = std::chrono::system_clock::now();
-    std::time_t now_to_time = std::chrono::system_clock::to_time_t(now);
-    start_time = *std::localtime(&now_to_time);
-
     return OK;
 }
 
-OutputCodes AppSetup::GetConfiguration()
+OutputCodes AppSetup::GetAndApplyConfiguration()
 {
+    // Check, get and apply information from configuration json and return if its valid or not
+    log_file_path = (configuration["log_file_path"] == "") ? STANDARD_LOG_FOLDER : configuration["log_file_path"];
     if (CreateLogFile() == WARNING)
         std::cout << "Continuing without log file!";
 
-    
-    
+    mqtt_server_address = (configuration["mqtt_server_address"] == "") ? STANDARD_MQTT_ADDRESS : configuration["mqtt_server_address"];
 
+    refresh_time = (configuration["refresh_time"] == "") ? STANDARD_REFRESH_TIME : configuration["refresh_time"];
+    if (CheckAndCorrectRefreshTime() == WARNING)
+        std::cout << "Invalid refresh_time found in configuration.json, using " << STANDARD_REFRESH_TIME << "instead!" << std::endl;
+    
     return OK;
 }
 
 OutputCodes AppSetup::CreateLogFile()
 {
-    // Check and get information from configuration file and return if its valid or not
-    log_file_path = (configuration["log_file_path"] == "") ? STANDARD_LOG_FOLDER : configuration["log_file_path"];
     std::filesystem::create_directories(log_file_path);
-    
-    std::ostringstream time_string_stream;
-    time_string_stream << std::put_time(&start_time, "%H:%M-%d_%m_%Y");
 
-    log_file_path.append(time_string_stream.str());
+    log_file_path.append(start_time);
     log_file_path.append(STANDARD_LOG_FILETYPE);
+
+    std::cout << "Writing logs to " << log_file_path << std::endl;
 
     std::ofstream log_file(log_file_path);
     if (!log_file.is_open())
@@ -101,6 +101,67 @@ OutputCodes AppSetup::CreateLogFile()
     }
         
     log_file.close();
+    return OK;
+}
+
+OutputCodes AppSetup::CheckAndCorrectRefreshTime()
+{
+    bool found_time = false;
+    bool found_valid_sequence = false;
+
+    std::string temp_num_found = "";
+    char temp_time_found = ' ';
+    int temp_seconds = 0;
+    int multiplier = 1;
+
+    seconds_refresh_time = std::chrono::seconds(0);
+
+    for (char& c : refresh_time)
+    {
+        if (isdigit(c))
+        {
+            temp_num_found.append(1, c);
+        } else if (isalpha(c))
+        {
+            temp_time_found = c;
+            found_time = true;
+            if (!temp_num_found.empty())
+            {
+                found_time = true;
+
+                switch (c)
+                {
+                    case 's':
+                        multiplier = 1;
+                        break;
+                    case 'm':
+                        multiplier = 60;
+                        break;
+                    case 'h':
+                        multiplier = 3600;
+                        break;
+                    case 'd':
+                        multiplier = 86400;
+                        break;
+                    default:
+                        break;
+                }
+                
+
+                // std::stoi(temp_num_found);
+            }
+            
+        }
+        else
+        {
+            std::cout << "Character " << c << " not admitted in refresh_time";
+            // export function to do conversion and sum STANDARD_REFRESH_TIME instead
+            // seconds_refresh_time += 
+            return WARNING;
+        }
+    }
+    
+    
     return OK;
 }
 

@@ -74,6 +74,7 @@
         "xutility": "cpp",
         "deque": "cpp",
         "queue": "cpp",
-        "fstream": "cpp"
+        "fstream": "cpp",
+        "regex": "cpp"
     }
 }
