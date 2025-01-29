@@ -28,7 +28,7 @@ int main(int argc, char* argv[])
     if (setup->StartSetup() != OK)
         std::cout << "Unable to setup repository_watcher, check configuration.json file at " << str_path << std::endl;
     else
-        std::cout << "Setup done!";
+        std::cout << "Setup done!" << std::endl;
     
     /*
         - Start watcher loop

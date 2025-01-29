@@ -32,9 +32,6 @@ OutputCodes AppSetup::StartSetup()
     }
     configuration = conf_json;
 
-    std::cout << configuration << std::endl;
-    std::cout << configuration.size() << std::endl;
-
     // Read elements from configuration and setup private variables
     if (GetConfiguration() == ERROR || GetConfiguration() == CRITICAL_ERROR)
     {
@@ -60,7 +57,9 @@ OutputCodes AppSetup::GetConfiguration()
 
 NotificationServer* AppSetup::SetupNotificationServer()
 {
-    return nullptr;
+    NotificationServer* notification_server;
+    notification_server = new NotificationServer;
+    return notification_server;
 }
 
 OutputCodes AppSetup::SetConfFilePath(std::string conf_path)
