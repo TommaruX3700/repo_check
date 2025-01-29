@@ -26,16 +26,19 @@ private:
     std::string configuration_file_path;
     nlohmann::json configuration;
 
-    std::string log_file_path, mqtt_server_address, refresh_time;
+    std::string log_file_path, mqtt_server_address, refresh_time, local_folder_path, remote_repository;
     std::map<int, std::string> notification_levels;
+    
+    std::queue<std::string>* pre_commands_queue;
     std::queue<std::string>* commands_queue;
+
     NotificationServer* notification_server;
 
     NotificationServer* SetupNotificationServer();
     OutputCodes GetConfiguration();
+    OutputCodes PopulateCmdQueues();
    
     // Set&Get methods
-    OutputCodes SetConfFilePath(std::string conf_path);
 
 public:
     AppSetup(std::string conf_path);
@@ -45,6 +48,9 @@ public:
 
     // Set&Get methods
     std::queue<std::string>* GetCmdQueue();
-    
+
+    // these two usable for the rest of the program
+    std::string GetLocalFolderPath();
+    std::string GetRemoteRepository();
 };
 

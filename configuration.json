@@ -1,6 +1,8 @@
 {
     "configuration" : [
         {
+            "log_file_path" : "",
+            "mqtt_server_address" : "",
             "remote_repository" : "",
             "local_folder_path" : "",
             "refresh_time" : "1m",
@@ -10,8 +12,8 @@
                     "command" : "echo AAAAAAAAAAATEST FIRST COMMAND!\n "
                 },
                 {
-                    "exec_order": 5,
-                    "command" : "echo TEST LAST COMMAND!\n "
+                    "exec_order": -5,
+                    "command" : "echo PRE COMMAND!\n "
                 },
                 {
                     "exec_order": 1,
