@@ -42,8 +42,8 @@ Linux daemon to handle release changes on a repository and perform custom instal
 }
 ``` 
 ### Default values:
-- log_file_path : ".",
-- mqtt_server_address : "",
-- remote_repository : "",
-- local_folder_path : ".",
-- refresh_time : "1m",
+- log_file_path : "" ---------> logs will be created in the current folder where repo_checker is installed 
+- mqtt_server_address : ""-----> empty mqtt means it is disabled
+- remote_repository : "" ------> empty remote_repository wont make the program start 
+- local_folder_path : "" -----> empty local_folder_path wont make the program start
+- refresh_time : "" ---------> emptu refresh_time will make the application check every 10 minutes
