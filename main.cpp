@@ -7,8 +7,11 @@ int main(int argc, char* argv[])
 
     std::string str_path;
 
-    if (argc != 1)
-        std::cout << "No configuration file provided, loading execution path . . ." << std::endl;
+    if (argc != 2)
+    {
+        std::cout << "No configuration file provided, loading local execution path . . ." << std::endl;
+        str_path = STANDARD_PATH;
+    }
     else
     {
         auto path = argv[1];
@@ -20,7 +23,9 @@ int main(int argc, char* argv[])
     }
     
     AppSetup* setup;
-    if (setup->StartSetup(".") != OK)
+    setup = new AppSetup(str_path);
+
+    if (setup->StartSetup() != OK)
         std::cout << "Unable to setup repository_watcher, check configuration.json file at " << str_path << std::endl;
     else
         std::cout << "Setup done!";

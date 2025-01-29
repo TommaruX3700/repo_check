@@ -6,3 +6,5 @@ enum OutputCodes {
     ERROR,
     CRITICAL_ERROR
 };
+
+#define STANDARD_PATH ".\\configuration.json"

@@ -9,6 +9,7 @@ AppSetup::AppSetup(std::string conf_path)
 AppSetup::~AppSetup()
 {
     delete commands_queue;
+    delete notification_server;
 }
 
 OutputCodes AppSetup::StartSetup()
@@ -21,7 +22,9 @@ OutputCodes AppSetup::StartSetup()
     }
 
     nlohmann::json conf_json;
-    std::stringstream(conf_file.get()) >> conf_json;
+    std::stringstream buffer;
+    buffer << conf_file.rdbuf();
+    conf_json = nlohmann::json::parse(buffer.str());
     if (conf_json.is_null() || conf_json.empty() || conf_json.size() == 0)
     {
         std::cout << "Invalid configuration file . . ." << std::endl;
@@ -29,8 +32,15 @@ OutputCodes AppSetup::StartSetup()
     }
     configuration = conf_json;
 
+    std::cout << configuration << std::endl;
+    std::cout << configuration.size() << std::endl;
+
     // Read elements from configuration and setup private variables
-    // TODO
+    if (GetConfiguration() == ERROR || GetConfiguration() == CRITICAL_ERROR)
+    {
+        std::cout << "Check configuration file format. . ." << std::endl;
+        return ERROR;
+    }
 
     // Setup notification_server
     notification_server = SetupNotificationServer();
@@ -39,6 +49,13 @@ OutputCodes AppSetup::StartSetup()
         std::cout << "Couldn't setup Notifications server . . ." << std::endl;
         return ERROR;
     }
+
+    return OK;
+}
+
+OutputCodes AppSetup::GetConfiguration()
+{
+    return OK;
 }
 
 NotificationServer* AppSetup::SetupNotificationServer()
@@ -49,11 +66,6 @@ NotificationServer* AppSetup::SetupNotificationServer()
 OutputCodes AppSetup::SetConfFilePath(std::string conf_path)
 {
     return OK;
-}
-
-std::string AppSetup::GetConfFilePath()
-{
-    return configuration_file_path;
 }
 
 std::queue<std::string>* AppSetup::GetCmdQueue()

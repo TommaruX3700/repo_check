@@ -32,6 +32,7 @@ private:
     NotificationServer* notification_server;
 
     NotificationServer* SetupNotificationServer();
+    OutputCodes GetConfiguration();
    
     // Set&Get methods
     OutputCodes SetConfFilePath(std::string conf_path);
@@ -43,7 +44,6 @@ public:
     OutputCodes StartSetup();
 
     // Set&Get methods
-    std::string GetConfFilePath();
     std::queue<std::string>* GetCmdQueue();
     
 };
