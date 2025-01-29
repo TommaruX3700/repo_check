@@ -10,6 +10,7 @@
 #include <filesystem>
 #include <regex>
 
+
 // Setup class for whole project startup
 
 /*
@@ -26,38 +27,36 @@ NB:
 class AppSetup
 {
 private:
-    std::string configuration_file_path;
-    nlohmann::json configuration;
-    std::string start_time;
+    std::string configuration_file_path; //ok
+    nlohmann::json configuration; //ok
+    std::string start_time; //ok
 
-    std::string log_file_path, mqtt_server_address, refresh_time, local_folder_path, remote_repository;
-    std::chrono::seconds seconds_refresh_time;
-    std::map<int, std::string> notification_levels;
+    std::string log_file_path, mqtt_server_address, refresh_time, local_folder_path, remote_repository; //ok
+    std::chrono::seconds seconds_refresh_time; //ok
     
-    std::queue<std::string>* pre_commands_queue;
-    std::queue<std::string>* commands_queue;
+    std::queue<std::string>* pre_commands_queue; //TODO
+    std::queue<std::string>* commands_queue; //TODO
 
-    NotificationServer* notification_server;
+    std::map<int, std::string> notification_levels; //TODO
+    NotificationServer* notification_server; //TODO
 
-    NotificationServer* SetupNotificationServer();
-    OutputCodes GetAndApplyConfiguration();
-    OutputCodes CreateLogFile();
-    OutputCodes CheckAndCorrectRefreshTime();
-    OutputCodes PopulateCmdQueues();
-   
-    // Set&Get methods
+    NotificationServer* SetupNotificationServer(); //ok
+    OutputCodes GetAndApplyConfiguration(); //ok
+    OutputCodes CreateLogFile(); //ok
+    OutputCodes CheckAndCorrectRefreshTime(); //ok
+    OutputCodes CheckLocalDir(); //ok
+    OutputCodes CheckRemoteRepo(); //ok
+    OutputCodes PopulateCmdQueues(); //TODO
 
 public:
-    AppSetup(std::string conf_path);
-    ~AppSetup();
+    AppSetup(std::string conf_path); //ok
+    ~AppSetup(); //TODO
 
-    OutputCodes StartSetup();
+    OutputCodes StartSetup(); //TODO
 
     // Set&Get methods
-    std::queue<std::string>* GetCmdQueue();
-
-    // these two usable for the rest of the program
-    std::string GetLocalFolderPath();
-    std::string GetRemoteRepository();
+    std::queue<std::string>* GetCmdQueue(); //ok
+    std::string GetLocalFolderPath(); //ok
+    std::string GetRemoteRepository(); //ok
 };
 

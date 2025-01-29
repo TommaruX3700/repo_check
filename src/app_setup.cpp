@@ -80,6 +80,22 @@ OutputCodes AppSetup::GetAndApplyConfiguration()
     if (CheckAndCorrectRefreshTime() == WARNING)
         std::cout << "Invalid refresh_time found in configuration.json, using " << STANDARD_REFRESH_TIME << "instead!" << std::endl;
     
+    local_folder_path = (configuration["local_folder_path"] == "") ? "" : configuration["local_folder_path"];
+    if(local_folder_path == "" || CheckLocalDir() != OK)
+    {
+        std::cout << "Can't continue without a valid local_folder_path!";
+        return ERROR;
+    }
+
+    remote_repository = (configuration["remote_repository"] == "") ? "" : configuration["remote_repository"];
+    if(remote_repository == "" || CheckRemoteRepo() != OK)
+    {
+        std::cout << "Can't continue without a valid remote_repository!";
+        return ERROR;
+    }
+
+    
+        
     return OK;
 }
 
@@ -106,9 +122,6 @@ OutputCodes AppSetup::CreateLogFile()
 
 OutputCodes AppSetup::CheckAndCorrectRefreshTime()
 {
-    bool found_time = false;
-    bool found_valid_sequence = false;
-
     std::string temp_num_found = "";
     char temp_time_found = ' ';
     int temp_seconds = 0;
@@ -124,44 +137,79 @@ OutputCodes AppSetup::CheckAndCorrectRefreshTime()
         } else if (isalpha(c))
         {
             temp_time_found = c;
-            found_time = true;
             if (!temp_num_found.empty())
             {
-                found_time = true;
-
                 switch (c)
                 {
                     case 's':
-                        multiplier = 1;
+                        multiplier = SECONDS_MULTIPLIER;
                         break;
                     case 'm':
-                        multiplier = 60;
+                        multiplier = MINUTES_MULTIPLIER;
                         break;
                     case 'h':
-                        multiplier = 3600;
+                        multiplier = HOURS_MULTIPLIER;
                         break;
                     case 'd':
-                        multiplier = 86400;
+                        multiplier = DAYS_MULTIPLIER;
                         break;
                     default:
                         break;
                 }
-                
-
-                // std::stoi(temp_num_found);
+                seconds_refresh_time += std::chrono::seconds(std::stoi(temp_num_found)*multiplier);
             }
-            
         }
         else
         {
             std::cout << "Character " << c << " not admitted in refresh_time";
-            // export function to do conversion and sum STANDARD_REFRESH_TIME instead
-            // seconds_refresh_time += 
+            seconds_refresh_time += std::chrono::seconds(STD_REFRESH_TIME_SECONDS);
             return WARNING;
         }
     }
+    return OK;
+}
+
+OutputCodes AppSetup::CheckLocalDir()
+{
+    // chheck if the local dir exists
+    std::filesystem::directory_entry dir_to_check{local_folder_path};
+    if (!dir_to_check.exists())
+    {
+        std::cout << "Couldn't verify if the local path exists!";
+        return ERROR;
+    }
+    return OK;
+}
+
+OutputCodes AppSetup::CheckRemoteRepo()
+{
+    if (std::system("git -v") != OK)
+    {
+        std::cout << "Git not found!" << std::endl;
+        return CRITICAL_ERROR;
+    }
     
-    
+    if (std::system(("git -C" + local_folder_path + " remote -v").c_str()) != OK)
+    {
+        std::cout << "No .git folder found! Trying to add remote. . ." << std::endl;
+        std::cout << "Try 1 . . ." << std::endl;
+        if (std::system(("git -C"+ local_folder_path + " remote add origin " + remote_repository).c_str()) != OK)
+        {
+            std::cout << "Couldn't add any remote from " << remote_repository << std::endl;
+            std::cout << "Try 2 . . ." << std::endl;
+            if (std::system(("git -C" + local_folder_path + " init && git -C " + local_folder_path + " remote add origin " + remote_repository).c_str()) != OK)
+            {
+                std::cout << "Failed also to initialize repo, check remote_repository and local_folder_path!" << std::endl;
+                return ERROR;
+            }
+        }
+    }
+
+    if(std::system(("git -C " + local_folder_path + " ls-remote").c_str()) != OK)
+    {
+        std::cout << "Any remotes are present!" << std::endl;
+        return ERROR;
+    }
     return OK;
 }
 

@@ -5,7 +5,7 @@ Linux daemon to handle release changes on a repository and perform custom instal
 - Default values will be used if left empty;
 - All cmd `.` paths will be refered to `local_folder_path`;
 - cmd with exec order < 0 will be executed BEFORE all other operations 
-- refresh time may be set to values like 1s, 1m, 1h, 1d, 1m or combinations of these such as 10h30m32s
+- refresh time may be set to values like 1s, 1m, 1h, 1d or combinations of these such as 10h30m32s
 
 ### `configuration.json` structure:
 ```json
