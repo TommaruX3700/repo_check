@@ -27,7 +27,11 @@ AppSetup::~AppSetup()
 OutputCodes AppSetup::StartSetup()
 {
     // Set application startup time    
-    start_time = std::format("{:%T_%F}", std::chrono::system_clock::now());
+    auto now = std::chrono::system_clock::now();
+    auto in_time_t = std::chrono::system_clock::to_time_t(now);
+    std::ostringstream oss;
+    oss << std::put_time(std::localtime(&in_time_t), "%T_%F");
+    start_time = oss.str();
 
     std::ifstream conf_file(configuration_file_path);
     if (!conf_file.is_open())
@@ -94,7 +98,7 @@ OutputCodes AppSetup::GetAndApplyConfiguration()
         return ERROR;
     }
 
-    
+
         
     return OK;
 }
@@ -216,6 +220,7 @@ OutputCodes AppSetup::CheckRemoteRepo()
 OutputCodes AppSetup::PopulateCmdQueues()
 {
     // Get all the cmds, sort and order them in the pre_commands_queue and the commands_queue, return if successfull or not
+    return OK;
 }
 
 NotificationServer* AppSetup::SetupNotificationServer()
