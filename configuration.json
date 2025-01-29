@@ -1,30 +1,25 @@
 {
-    "configuration" : [
+    "log_file_path" : "",
+    "mqtt_server_address" : "",
+    "remote_repository" : "",
+    "local_folder_path" : "",
+    "refresh_time" : "1m",
+    "cmd" : [
         {
-            "log_file_path" : "",
-            "mqtt_server_address" : "",
-            "remote_repository" : "",
-            "local_folder_path" : "",
-            "refresh_time" : "1m",
-            "cmd" : [
-                {
-                    "exec_order": 0,
-                    "command" : "echo AAAAAAAAAAATEST FIRST COMMAND!\n "
-                },
-                {
-                    "exec_order": -5,
-                    "command" : "echo PRE COMMAND!\n "
-                },
-                {
-                    "exec_order": 1,
-                    "command" : "echo TEST SECOND COMMAND!\n "
-                },
-                {
-                    "exec_order": 3,
-                    "command" : "echo TEST THIRD COMMAND!\n "
-                }
-            ]
+            "exec_order": 0,
+            "command" : "echo AAAAAAAAAAATEST FIRST COMMAND!\n "
+        },
+        {
+            "exec_order": -5,
+            "command" : "echo PRE COMMAND!\n "
+        },
+        {
+            "exec_order": 1,
+            "command" : "echo TEST SECOND COMMAND!\n "
+        },
+        {
+            "exec_order": 3,
+            "command" : "echo TEST THIRD COMMAND!\n "
         }
     ]
-
 }

@@ -10,7 +10,7 @@ int main(int argc, char* argv[])
     if (argc != 2)
     {
         std::cout << "No configuration file provided, loading local execution path . . ." << std::endl;
-        str_path = STANDARD_PATH;
+        str_path = STANDARD_CONFIG_PATH;
     }
     else
     {

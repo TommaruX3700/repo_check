@@ -37,6 +37,8 @@ OutputCodes AppSetup::StartSetup()
     std::stringstream buffer;
     buffer << conf_file.rdbuf();
     conf_json = nlohmann::json::parse(buffer.str());
+    conf_file.close();
+
     if (conf_json.is_null() || conf_json.empty() || conf_json.size() == 0)
     {
         std::cout << "Invalid configuration file . . ." << std::endl;
@@ -49,7 +51,7 @@ OutputCodes AppSetup::StartSetup()
     {
         std::cout << "Check configuration file format. . ." << std::endl;
         return ERROR;
-    }
+    }  
 
     // Setup notification_server
     notification_server = SetupNotificationServer();
@@ -59,15 +61,46 @@ OutputCodes AppSetup::StartSetup()
         return ERROR;
     }
 
+    // Set application startup time
+    auto now = std::chrono::system_clock::now();
+    std::time_t now_to_time = std::chrono::system_clock::to_time_t(now);
+    start_time = *std::localtime(&now_to_time);
+
     return OK;
 }
 
 OutputCodes AppSetup::GetConfiguration()
 {
-    // Check and get information from configuration file and return if its valid or not
+    if (CreateLogFile() == WARNING)
+        std::cout << "Continuing without log file!";
 
     
+    
 
+    return OK;
+}
+
+OutputCodes AppSetup::CreateLogFile()
+{
+    // Check and get information from configuration file and return if its valid or not
+    log_file_path = (configuration["log_file_path"] == "") ? STANDARD_LOG_FOLDER : configuration["log_file_path"];
+    std::filesystem::create_directories(log_file_path);
+    
+    std::ostringstream time_string_stream;
+    time_string_stream << std::put_time(&start_time, "%H:%M-%d_%m_%Y");
+
+    log_file_path.append(time_string_stream.str());
+    log_file_path.append(STANDARD_LOG_FILETYPE);
+
+    std::ofstream log_file(log_file_path);
+    if (!log_file.is_open())
+    {
+        std::cout << "Couldn't create log file!";
+        log_file.close();
+        return WARNING;
+    }
+        
+    log_file.close();
     return OK;
 }
 

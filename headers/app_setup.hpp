@@ -6,6 +6,11 @@
 #include <fstream>
 #include <string>
 #include <queue>
+#include <chrono>
+#include <iomanip>
+#include <sstream>
+#include <ctime>
+#include <filesystem>
 
 // Setup class for whole project startup
 
@@ -25,6 +30,7 @@ class AppSetup
 private:
     std::string configuration_file_path;
     nlohmann::json configuration;
+    std::tm start_time;
 
     std::string log_file_path, mqtt_server_address, refresh_time, local_folder_path, remote_repository;
     std::map<int, std::string> notification_levels;
@@ -36,6 +42,7 @@ private:
 
     NotificationServer* SetupNotificationServer();
     OutputCodes GetConfiguration();
+    OutputCodes CreateLogFile();
     OutputCodes PopulateCmdQueues();
    
     // Set&Get methods
