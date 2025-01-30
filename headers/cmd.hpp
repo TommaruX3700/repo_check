@@ -3,20 +3,21 @@
 #include <iostream>
 #include <cstdint>
 
-class cmd
+class CMD
 {
 private:
     int priority;
-    std::string cmd_text;
+    std::string CMD_text;
     bool has_output;
-    std::string cmd_output;
+    std::string CMD_output;
     std::uintptr_t id;
 
 public:
-    cmd(int priority, std::string cmd_text, bool has_output);
-    ~cmd();
+    CMD(int priority, std::string CMD_text, bool has_output);
+    ~CMD();
 
     OutputCodes Run();
+    int GetExecOrder();
     OutputCodes GetOutput();
 };
 

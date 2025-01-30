@@ -1,26 +1,31 @@
 #include "cmd.hpp"
 
-cmd::cmd(int priority_value, std::string _cmd_text, bool _has_output)
-    : priority { priority_value }, cmd_text { _cmd_text }, has_output { _has_output }
+CMD::CMD(int priority_value, std::string _CMD_text, bool _has_output)
+    : priority { priority_value }, CMD_text { _CMD_text }, has_output { _has_output }
 {
     id = reinterpret_cast<std::uintptr_t>(this);
     std::cout << "Command " << id << " configured!" << std::endl;
 }
 
-cmd::~cmd()
+CMD::~CMD()
 {
     id = 0;
     priority = 0;
-    cmd_text.clear();
+    CMD_text.clear();
 }
 
-OutputCodes cmd::Run()
+OutputCodes CMD::Run()
 {
     // TODO
     return OK;
 }
 
-OutputCodes cmd::GetOutput()
+int CMD::GetExecOrder()
+{
+    return priority;
+}
+
+OutputCodes CMD::GetOutput()
 {
     // TODO
     return OK;

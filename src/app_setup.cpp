@@ -8,7 +8,7 @@ AppSetup::AppSetup(std::string conf_path)
     refresh_time.clear();
     notification_levels.clear();
     configuration_file_path = conf_path;
-    commands_queue = new std::queue<std::string>;
+    commands_queue = new std::queue<CMD*>;
 }
 
 AppSetup::~AppSetup()
@@ -217,20 +217,34 @@ OutputCodes AppSetup::CheckRemoteRepo()
 
 OutputCodes AppSetup::PopulateCmdQueues()
 {
-    // Get all the cmds, sort and order them in the pre_commands_queue and the commands_queue, return if successfull or not
-    nlohmann::json json_commands = configuration["cmd"];
-    std::list<cmd*> t_cmd_list; 
-    // TODO: fill the list
-    for (nlohmann::json& cmd : json_commands)
-    {
-        if (t_cmd_list.size() != 0)
-        {
-            
-        }
-    }
-    //TODO: convert the list to queue
-    
+    // Get all the CMDs, sort and order them in the pre_commands_queue and the commands_queue, return if successfull or not
+    nlohmann::json json_commands = configuration["CMD"];
+    CMD* newCMD;
+    std::vector<CMD*> temp_CMD_vector; 
 
+    // fill the vector in order
+    for (nlohmann::json& j_CMD : json_commands)
+    {
+        newCMD = new CMD(j_CMD["exec_order"], j_CMD["command"], j_CMD["has_output"]);
+        if (temp_CMD_vector.size() != 0)
+        {
+            std::vector<CMD*>::iterator iterator = temp_CMD_vector.begin();
+            for (CMD* temp_CMD : temp_CMD_vector)
+            {
+                iterator++;
+                if (temp_CMD->GetExecOrder() < newCMD->GetExecOrder())
+                {
+                    temp_CMD_vector.insert(iterator, newCMD);
+                }
+            }
+        } else
+            temp_CMD_vector.push_back(newCMD);
+    }
+
+    // convert the vector to queue
+    for (CMD* vector_CMD : temp_CMD_vector)
+        commands_queue->push(vector_CMD);
+    
     return OK;
 }
 
@@ -243,7 +257,7 @@ NotificationServer* AppSetup::SetupNotificationServer()
     return notification_server;
 }
 
-std::queue<std::string>* AppSetup::GetCmdQueue()
+std::queue<CMD*>* AppSetup::GetCmdQueue()
 {
     return commands_queue;
 }

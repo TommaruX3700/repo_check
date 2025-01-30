@@ -7,19 +7,23 @@
     "cmd" : [
         {
             "exec_order": 0,
-            "command" : "echo AAAAAAAAAAATEST FIRST COMMAND!\n "
+            "command" : "echo AAAAAAAAAAATEST FIRST COMMAND!\n ",
+            "has_output" : true
         },
         {
             "exec_order": -5,
-            "command" : "echo PRE COMMAND!\n "
+            "command" : "echo PRE COMMAND!\n ",
+            "has_output" : false
         },
         {
             "exec_order": 1,
-            "command" : "echo TEST SECOND COMMAND!\n "
+            "command" : "echo TEST SECOND COMMAND!\n ",
+            "has_output" : false
         },
         {
             "exec_order": 3,
-            "command" : "echo TEST THIRD COMMAND!\n "
+            "command" : "echo TEST THIRD COMMAND!\n ",
+            "has_output" : true
         }
     ]
 }

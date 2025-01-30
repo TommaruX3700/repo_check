@@ -6,6 +6,7 @@ Linux daemon to handle release changes on a repository and perform custom instal
 - All cmd `.` paths will be refered to `local_folder_path`;
 - cmd with exec order < 0 will be executed BEFORE all other operations 
 - refresh time may be set to values like 1s, 1m, 1h, 1d or combinations of these such as 10h30m32s
+- if a command has and output, defined by the flag `has_output`, its output will be collected in the logs.
 
 ### `configuration.json` structure:
 ```json
@@ -18,19 +19,23 @@ Linux daemon to handle release changes on a repository and perform custom instal
     "cmd" : [
         {
             "exec_order": 0,
-            "command" : ""
+            "command" : "",
+            "has_output" : true
         },
         {
             "exec_order": -5,
-            "command" : "rm -rf ."
+            "command" : "rm -rf .",
+            "has_output" : false
         },
         {
             "exec_order": 1,
-            "command" : "echo TEST SECOND COMMAND!\n "
+            "command" : "echo TEST SECOND COMMAND!\n ",
+            "has_output" : false
         },
         {
             "exec_order": 3,
-            "command" : "echo TEST THIRD COMMAND!\n "
+            "command" : "echo TEST THIRD COMMAND!\n ",
+            "has_output" : true
         }
     ]
 }

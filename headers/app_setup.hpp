@@ -8,7 +8,7 @@
 #include <string>
 #include <queue>
 #include <chrono>
-#include <list>
+#include <vector>
 #include <filesystem>
 
 // Setup class for whole project startup
@@ -36,7 +36,7 @@ private:
     std::chrono::seconds seconds_refresh_time; //to_test
     
     std::queue<std::string>* pre_commands_queue; //TODO
-    std::queue<std::string>* commands_queue; //TODO
+    std::queue<CMD*>* commands_queue; //TODO
 
     std::map<int, std::string> notification_levels; //TODO
     NotificationServer* notification_server; //TODO
@@ -56,7 +56,7 @@ public:
     OutputCodes StartSetup(); //TODO
 
     // Set&Get methods
-    std::queue<std::string>* GetCmdQueue(); 
+    std::queue<CMD*>* GetCmdQueue(); 
     std::string GetLocalFolderPath(); 
     std::string GetRemoteRepository(); 
 };
