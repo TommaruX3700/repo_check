@@ -3,11 +3,19 @@
 
 // Public usable interfaces and defines
 
+// Output codes for functions
 enum OutputCodes { 
     OK,
     WARNING,
     ERROR,
     CRITICAL_ERROR
+};
+
+// Notification levels to determine how much infos will be given out to notification streams
+enum NotificationLevels {
+    MINIMAL,
+    INFO,
+    DEBUG
 };
 
 #ifdef _WIN32

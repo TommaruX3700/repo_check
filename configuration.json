@@ -4,6 +4,7 @@
     "remote_repository" : "",
     "local_folder_path" : "",
     "refresh_time" : "1m",
+    "notification_level" : "d",
     "cmd" : [
         {
             "exec_order": 0,

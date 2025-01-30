@@ -35,8 +35,8 @@ private:
     std::string log_file_path, mqtt_server_address, refresh_time, local_folder_path, remote_repository; //to_test
     std::chrono::seconds seconds_refresh_time; //to_test
     
-    std::queue<std::string>* pre_commands_queue; //TODO
-    std::queue<CMD*>* commands_queue; //TODO
+    // Contains both pre-commands and normal ones: checked during runtime if there are any and executed untill .front().priority() >= 0
+    std::queue<CMD*>* commands_queue; //to_test
 
     std::map<int, std::string> notification_levels; //TODO
     NotificationServer* notification_server; //TODO
@@ -47,7 +47,7 @@ private:
     OutputCodes CheckAndCorrectRefreshTime(); //to_test
     OutputCodes CheckLocalDir(); //to_test
     OutputCodes CheckRemoteRepo(); //to_test
-    OutputCodes PopulateCmdQueues(); //TODO
+    OutputCodes PopulateCmdQueues(); //to_test
 
 public:
     AppSetup(std::string conf_path); //to_test
