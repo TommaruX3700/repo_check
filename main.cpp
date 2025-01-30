@@ -32,10 +32,15 @@ int main(int argc, char* argv[])
     setup = new AppSetup(str_path);
 
     if (setup->StartSetup() != OK)
+    {
         std::cout << "Unable to setup repository_watcher, check configuration.json file at " << str_path << std::endl;
+        return ERROR;
+    }  
     else
         std::cout << "Setup done!" << std::endl;
     
+    NotificationServer* notification_server = setup->GetNotificationServer();
+
     /*
         - Start watcher loop
             > Start notification_server which will produce notification objects, execute them and release them in the end.
@@ -44,5 +49,5 @@ int main(int argc, char* argv[])
     */
 
     std::cout << "Shutting down service . . ." << std::endl;
-    return 0;
+    return OK;
 }

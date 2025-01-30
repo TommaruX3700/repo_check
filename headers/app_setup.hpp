@@ -54,5 +54,6 @@ public:
     std::queue<CMD*>* GetCmdQueue(); 
     std::string GetLocalFolderPath(); 
     std::string GetRemoteRepository(); 
+    NotificationServer* GetNotificationServer();
 };
 

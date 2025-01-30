@@ -313,3 +313,8 @@ std::string AppSetup::GetRemoteRepository()
 {
     return remote_repository;
 }
+
+NotificationServer* AppSetup::GetNotificationServer()
+{
+    return notification_server;
+}

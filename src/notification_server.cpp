@@ -8,3 +8,8 @@ NotificationServer::NotificationServer(std::string _log_file_path, std::string _
 NotificationServer::~NotificationServer()
 {
 }
+
+OutputCodes NotificationServer::send_notification(NotificationLevels level, std::string text)
+{
+    return OK;
+}
