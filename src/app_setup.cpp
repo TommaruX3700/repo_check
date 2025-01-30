@@ -98,8 +98,6 @@ OutputCodes AppSetup::GetAndApplyConfiguration()
         return ERROR;
     }
 
-
-        
     return OK;
 }
 
@@ -220,13 +218,27 @@ OutputCodes AppSetup::CheckRemoteRepo()
 OutputCodes AppSetup::PopulateCmdQueues()
 {
     // Get all the cmds, sort and order them in the pre_commands_queue and the commands_queue, return if successfull or not
+    nlohmann::json json_commands = configuration["cmd"];
+    std::list<cmd*> t_cmd_list; 
+    // TODO: fill the list
+    for (nlohmann::json& cmd : json_commands)
+    {
+        if (t_cmd_list.size() != 0)
+        {
+            
+        }
+    }
+    //TODO: convert the list to queue
+    
+
     return OK;
 }
 
 NotificationServer* AppSetup::SetupNotificationServer()
 {
-    // Setup correctlu the Notification Server and return the object if it was successfull
+    // Setup correctly the Notification Server and return the object if it was successfull
     NotificationServer* notification_server;
+    // Develop constructor 
     notification_server = new NotificationServer;
     return notification_server;
 }

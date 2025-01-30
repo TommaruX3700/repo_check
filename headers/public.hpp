@@ -1,3 +1,6 @@
+#ifndef PUBLIC_HPP
+#define PUBLIC_HPP
+
 // Public usable interfaces and defines
 
 enum OutputCodes { 
@@ -26,3 +29,5 @@ enum OutputCodes {
 #define MINUTES_MULTIPLIER 60
 #define HOURS_MULTIPLIER 3600
 #define DAYS_MULTIPLIER 86400
+
+#endif
