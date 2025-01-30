@@ -3,8 +3,8 @@
 
 /*
 TODO: 
-- Add exception handling
-- Make proper class to store all std::cout output and write them to a file to provide debug infos on program functionalities
+    - Add exception handling
+    - Make proper class to store all std::cout output and write them to a file to provide debug infos on program functionalities
 */
 
 int main(int argc, char* argv[]) 
