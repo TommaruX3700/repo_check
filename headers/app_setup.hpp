@@ -15,14 +15,8 @@
 
 /*
 TODO:
-    > Check configuration file if is ok with its syntax
-    > Setup public usable variables 
-    > Setup "notification_server" object factory
-    > implement "Cmd" class correctly and substiture all the cmds verbose commands
-
-NB:
-    - Protect other methods
-    - Manage resources correctly
+    > "CheckRemoteRepo()": refactor with "Cmd" class implementation to substitute all the cmds verbose commands with objects;
+    > "StartSetup()": implement pre-log drop on notification_server at the ent of method.
 */
 
 class AppSetup
@@ -38,8 +32,8 @@ private:
     // Contains both pre-commands and normal ones: checked during runtime if there are any and executed untill .front().priority() >= 0
     std::queue<CMD*>* commands_queue; //to_test
 
-    std::map<int, std::string> notification_levels; //TODO
-    NotificationServer* notification_server; //TODO
+    NotificationLevels notification_level; //to_test
+    NotificationServer* notification_server; //to_test
 
     NotificationServer* SetupNotificationServer(); //to_test
     OutputCodes GetAndApplyConfiguration(); //to_test
@@ -47,13 +41,14 @@ private:
     OutputCodes CheckAndCorrectRefreshTime(); //to_test
     OutputCodes CheckLocalDir(); //to_test
     OutputCodes CheckRemoteRepo(); //to_test
+    OutputCodes CheckNotificationLevel(); //to_test
     OutputCodes PopulateCmdQueues(); //to_test
 
 public:
     AppSetup(std::string conf_path); //to_test
-    ~AppSetup(); //TODO
+    ~AppSetup(); //to_test
 
-    OutputCodes StartSetup(); //TODO
+    OutputCodes StartSetup(); //to_test + TODO: implement pre-log drop on notification server
 
     // Set&Get methods
     std::queue<CMD*>* GetCmdQueue(); 

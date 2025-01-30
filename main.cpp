@@ -1,6 +1,12 @@
 #include <iostream>
 #include "headers/app_setup.hpp"
 
+/*
+TODO: 
+- Add exception handling
+- Make proper class to store all std::cout output and write them to a file to provide debug infos on program functionalities
+*/
+
 int main(int argc, char* argv[]) 
 {
     std::cout << "Repo_checker started! State: " << OK << std::endl;

@@ -6,7 +6,6 @@ AppSetup::AppSetup(std::string conf_path)
     log_file_path.clear();
     mqtt_server_address.clear();
     refresh_time.clear();
-    notification_levels.clear();
     configuration_file_path = conf_path;
     commands_queue = new std::queue<CMD*>;
 }
@@ -17,7 +16,6 @@ AppSetup::~AppSetup()
     log_file_path.clear();
     mqtt_server_address.clear();
     refresh_time.clear();
-    notification_levels.clear();
     while (commands_queue->size())
         commands_queue->pop();
     delete commands_queue;
@@ -56,7 +54,7 @@ OutputCodes AppSetup::StartSetup()
     // Read elements from configuration and setup private variables
     if (GetAndApplyConfiguration() == ERROR || GetAndApplyConfiguration() == CRITICAL_ERROR)
     {
-        std::cout << "Check configuration file format. . ." << std::endl;
+        std::cout << "Generic error on configuration.json, check file format. . ." << std::endl;
         return ERROR;
     }  
 
@@ -68,6 +66,11 @@ OutputCodes AppSetup::StartSetup()
         return ERROR;
     }
 
+    /*
+        TODO:
+        - start notification server as soon as possible and drop there all previus cached std::cout, according to NotificationLevel
+    */
+
     return OK;
 }
 
@@ -76,7 +79,7 @@ OutputCodes AppSetup::GetAndApplyConfiguration()
     // Check, get and apply information from configuration json and return if its valid or not
     log_file_path = (configuration["log_file_path"] == "") ? STANDARD_LOG_FOLDER : configuration["log_file_path"];
     if (CreateLogFile() == WARNING)
-        std::cout << "Continuing without log file!";
+        std::cout << "Continuing without log file!" << std::endl;
 
     mqtt_server_address = (configuration["mqtt_server_address"] == "") ? STANDARD_MQTT_ADDRESS : configuration["mqtt_server_address"];
 
@@ -87,17 +90,29 @@ OutputCodes AppSetup::GetAndApplyConfiguration()
     local_folder_path = (configuration["local_folder_path"] == "") ? "" : configuration["local_folder_path"];
     if(local_folder_path == "" || CheckLocalDir() != OK)
     {
-        std::cout << "Can't continue without a valid local_folder_path!";
+        std::cout << "Can't continue without a valid local_folder_path!" << std::endl;
         return ERROR;
     }
 
     remote_repository = (configuration["remote_repository"] == "") ? "" : configuration["remote_repository"];
     if(remote_repository == "" || CheckRemoteRepo() != OK)
     {
-        std::cout << "Can't continue without a valid remote_repository!";
+        std::cout << "Can't continue without a valid remote_repository!" << std::endl;
         return ERROR;
     }
 
+    if (PopulateCmdQueues() != OK)
+    {
+        std::cout << "Can't load user defined commands!" << std::endl;
+        return ERROR;
+    }
+
+    if (CheckNotificationLevel() == WARNING)
+    {
+        std::cout << "Can't load user defined notification_level! Using 'info' instead" << std::endl;
+        notification_level = INFO;
+    }
+    
     return OK;
 }
 
@@ -215,6 +230,34 @@ OutputCodes AppSetup::CheckRemoteRepo()
     return OK;
 }
 
+OutputCodes AppSetup::CheckNotificationLevel()
+{
+    char m_notification_level_char = configuration["notification_level"].get<std::string>()[0];
+    if (m_notification_level_char == ' ')
+    {
+        std::cout << "Couln't read notification_level character in configuration.json" << std::endl;
+        return WARNING;
+    }
+    
+    switch (m_notification_level_char)
+    {
+        case 'm':
+            notification_level = MINIMAL;
+            break;
+        case 'i':
+            notification_level = INFO;
+            break;
+        case 'd':
+            notification_level = DEBUG;
+            break;
+        default:
+            std::cout << "Invalid notification_level character in configuration.json." << std::endl;
+            return WARNING;
+            break;
+    }
+    return OK;
+}
+
 OutputCodes AppSetup::PopulateCmdQueues()
 {
     // Get all the CMDs, sort and order them in the pre_commands_queue and the commands_queue, return if successfull or not
@@ -252,8 +295,7 @@ NotificationServer* AppSetup::SetupNotificationServer()
 {
     // Setup correctly the Notification Server and return the object if it was successfull
     NotificationServer* notification_server;
-    // Develop constructor 
-    notification_server = new NotificationServer;
+    notification_server = new NotificationServer(log_file_path, mqtt_server_address, notification_level);
     return notification_server;
 }
 
