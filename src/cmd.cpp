@@ -14,19 +14,14 @@ CMD::~CMD()
     CMD_text.clear();
 }
 
-OutputCodes CMD::Run()
+CmdOutput CMD::Run()
 {
-    // TODO
-    return OK;
+    // Execute command and return error_code and verbose output if present
+    CmdOutput sample(OK, "aa");
+    return sample;
 }
 
 int CMD::GetExecOrder()
 {
     return priority;
-}
-
-OutputCodes CMD::GetOutput()
-{
-    // TODO
-    return OK;
 }

@@ -55,5 +55,6 @@ public:
     std::string GetLocalFolderPath(); 
     std::string GetRemoteRepository(); 
     NotificationServer* GetNotificationServer();
+    NotificationLevels GetBaseNotificationLevel();
 };
 

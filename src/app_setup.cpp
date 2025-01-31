@@ -318,3 +318,8 @@ NotificationServer* AppSetup::GetNotificationServer()
 {
     return notification_server;
 }
+
+NotificationLevels AppSetup::GetBaseNotificationLevel()
+{
+    return notification_level;
+}

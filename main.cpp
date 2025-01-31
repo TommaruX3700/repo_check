@@ -39,15 +39,47 @@ int main(int argc, char* argv[])
     else
         std::cout << "Setup done!" << std::endl;
     
-    NotificationServer* notification_server = setup->GetNotificationServer();
-
     /*
         - Start watcher loop
-            > Start notification_server which will produce notification objects, execute them and release them in the end.
-            > Start timer on async thread, and each configuration_time timeout, trigger the rest
-            > Each time it triggers, start async thread to do repository check and cmds
+            > Start notification_server which will listen to notifications (maybe bind them to std behaviours).
+            > Start timer the same main.cpp thread, then wait till timeout and repeat loop
+            > handle closing keys
+            > do git ops as cmds
     */
 
+    NotificationServer* notification_server = setup->GetNotificationServer();
+    std::queue<CMD*>* cmd_queue = setup->GetCmdQueue();
+
+    // main loop
+    while (true)
+    {
+        std::queue<CMD*> loop_cmd_queue = *cmd_queue;
+
+        // pre-cmds
+        while (loop_cmd_queue.front()->GetExecOrder() < 0)
+        {
+            CMD* pre_cmd = loop_cmd_queue.front();
+            loop_cmd_queue.pop();
+            pre_cmd->Run();
+            delete pre_cmd;
+        }
+        
+        // git ops
+
+        // post-cmds
+        while (loop_cmd_queue.front())
+        {
+            CMD* cmd = loop_cmd_queue.front();
+            loop_cmd_queue.pop();
+            cmd->Run();
+            delete cmd;
+        }
+    }
+
     std::cout << "Shutting down service . . ." << std::endl;
+
+    delete setup;
+    delete notification_server;
+    delete cmd_queue;
     return OK;
 }

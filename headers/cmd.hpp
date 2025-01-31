@@ -16,9 +16,8 @@ public:
     CMD(int priority, std::string CMD_text, bool has_output);
     ~CMD();
 
-    OutputCodes Run();
+    CmdOutput Run();
     int GetExecOrder();
-    OutputCodes GetOutput();
 };
 
 

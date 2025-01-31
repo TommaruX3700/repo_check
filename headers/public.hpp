@@ -38,4 +38,8 @@ enum NotificationLevels {
 #define HOURS_MULTIPLIER 3600
 #define DAYS_MULTIPLIER 86400
 
+#include <utility>
+#include <iostream>
+typedef std::pair<OutputCodes, std::string> CmdOutput;
+
 #endif

@@ -2,7 +2,19 @@
 
 #include <iostream>
 
-// Factory class that will produce notifications and send them to appropriate channels
+// Class that will asynchrounsluy produce notifications and send them to appropriate channels
+
+/*
+    TODO:
+        - Creare un tread "worker" nel costruttore
+        - creare un distruttore adeguato
+        - fare una queue per i messaggi
+        - fare metodo ESPOSTO al main send_notification per aggiungere alla queue il messaggio
+        - mutex su queue
+        - condition_variable per triggerare il thread e leggere la queue
+        - thread accede alla queue per inviare i messaggi
+
+*/
 
 class NotificationServer
 {

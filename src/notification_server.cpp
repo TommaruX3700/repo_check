@@ -11,5 +11,14 @@ NotificationServer::~NotificationServer()
 
 OutputCodes NotificationServer::send_notification(NotificationLevels level, std::string text)
 {
+    
+    // getting notification level makes it usable also in run-time error debugging contexts
+    // if a notification doesnt meet the level configured in the class, it wont be published.
+
+    if (level != notification_level)
+        return OK;
+
+    // trasmit notification to all channels
+    
     return OK;
 }
