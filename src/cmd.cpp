@@ -25,3 +25,4 @@ int CMD::GetExecOrder()
 {
     return priority;
 }
+
