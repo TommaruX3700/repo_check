@@ -24,12 +24,15 @@ AppSetup::~AppSetup()
 
 OutputCodes AppSetup::StartSetup()
 {
+    /*
+        TODO:
+        - start notification server as soon as possible and drop there all previus 
+            cached std::cout, according to NotificationLevel
+        - use set methods to update later notification server attributes
+    */
+
     // Set application startup time    
-    auto now = std::chrono::system_clock::now();
-    auto in_time_t = std::chrono::system_clock::to_time_t(now);
-    std::ostringstream oss;
-    oss << std::put_time(std::localtime(&in_time_t), "%T_%F");
-    start_time = oss.str();
+    start_time = GetFormattedTime("%T_%F");
 
     std::ifstream conf_file(configuration_file_path);
     if (!conf_file.is_open())
@@ -65,11 +68,6 @@ OutputCodes AppSetup::StartSetup()
         std::cout << "Couldn't setup Notifications server . . ." << std::endl;
         return ERROR;
     }
-
-    /*
-        TODO:
-        - start notification server as soon as possible and drop there all previus cached std::cout, according to NotificationLevel
-    */
 
     return OK;
 }
@@ -128,7 +126,7 @@ OutputCodes AppSetup::CreateLogFile()
     std::ofstream log_file(log_file_path);
     if (!log_file.is_open())
     {
-        std::cout << "Couldn't create log file!";
+        std::cout << "Couldn't create log file!" << std::endl;
         log_file.close();
         return WARNING;
     }
@@ -200,6 +198,7 @@ OutputCodes AppSetup::CheckLocalDir()
 
 OutputCodes AppSetup::CheckRemoteRepo()
 {
+    // TODO: rework cmds with objects
     if (std::system("git -v") != OK)
     {
         std::cout << "Git not found!" << std::endl;

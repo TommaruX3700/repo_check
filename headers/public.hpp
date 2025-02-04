@@ -41,6 +41,7 @@ enum NotificationLevels {
 
 #include <utility>
 #include <iostream>
+#include <chrono>
 
 /*
     CmdOutput
@@ -58,5 +59,15 @@ struct Notification
     std::string text;
 };
 
+
+std::string GetFormattedTime(const char* format)
+{
+    if (format[0] == ' ' || sizeof(format)/sizeof(char*) == 0) format = "%T_%F";    
+    auto now = std::chrono::system_clock::now();
+    auto in_time_t = std::chrono::system_clock::to_time_t(now);
+    std::ostringstream oss;
+    oss << std::put_time(std::localtime(&in_time_t), format);
+    return  oss.str();
+}
 
 #endif

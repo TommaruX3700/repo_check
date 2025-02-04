@@ -7,6 +7,7 @@
 #include <shared_mutex>
 #include <condition_variable>
 #include <chrono>
+#include <fstream>
 // #include <functional>
 
 // Class that will asynchrounsluy produce notifications and send them to appropriate channels
@@ -28,6 +29,7 @@ class NotificationServer
 private:
     
     std::string log_file_path, mqtt_address;
+    std::ofstream log_file_stream;
     
     // Minimum_notification_level defines what is the minim level required to notifications for beign published
     NotificationLevels minimum_notification_level;
@@ -44,6 +46,9 @@ private:
     
     OutputCodes do_work();
     std::thread worker;
+
+    OutputCodes write_to_log(Notification message);
+    OutputCodes write_to_mqtt(Notification message);
 
 public:
     NotificationServer(std::string _log_file_path, std::string _mqtt_address, NotificationLevels _notification_level)

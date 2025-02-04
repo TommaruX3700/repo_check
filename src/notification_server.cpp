@@ -72,13 +72,22 @@ OutputCodes NotificationServer::do_work()
     return OK;
 }
 
-OutputCodes write_to_log(Notification message)
+OutputCodes NotificationServer::write_to_log(Notification message)
 {
     // write to log file
+    log_file_stream.open(log_file_path, std::ios_base::app);
+    if (!log_file_stream.is_open())
+    {
+        std::cout << "Can't open log file stream at " << log_file_path << "!" << std::endl;
+        return WARNING;
+    }
+    
+    log_file_stream << GetFormattedTime("%T_%F") << message.text;
+    log_file_stream.close();
     return OK;
 }
 
-OutputCodes write_to_mqtt(Notification message)
+OutputCodes NotificationServer::write_to_mqtt(Notification message)
 {
     // write to mqtt channel
     return OK;
