@@ -51,19 +51,16 @@ OutputCodes NotificationServer::do_work()
 
         try
         {
-            if (!snapshot_queue.empty())
-            {   
-                while (snapshot_queue.size())
-                {
-                    if (!log_file_path.empty())
-                        write_to_log(*snapshot_queue.front());
-                    
-                    if (!mqtt_address.empty())
-                        write_to_mqtt(*snapshot_queue.front());
-                    
-                    snapshot_queue.pop();
-                }
-            }   
+            while (!snapshot_queue.empty())
+            {
+                if (!log_file_path.empty())
+                    write_to_log(*snapshot_queue.front());
+                
+                if (!mqtt_address.empty())
+                    write_to_mqtt(*snapshot_queue.front());
+                
+                snapshot_queue.pop();
+            }  
         }
         catch(const std::exception& e)
         {
