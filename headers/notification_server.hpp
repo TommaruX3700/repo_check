@@ -33,7 +33,7 @@ private:
     NotificationLevels minimum_notification_level;
 
     // Here are stored all the notifications 
-    std::queue<Notification>notification_queue;
+    std::queue<std::shared_ptr<Notification>>notification_queue;
 
     // manages access to queue
     std::mutex worker_mutex;

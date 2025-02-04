@@ -15,7 +15,7 @@ OutputCodes NotificationServer::send(Notification message)
 {
     if (message.level < minimum_notification_level) return OK;
     std::unique_lock lock(worker_mutex);
-    notification_queue.push(message);
+    notification_queue.push(std::make_shared<Notification>(message));
     lock.unlock();
     work_todo.notify_one();
     return OK;
@@ -27,7 +27,7 @@ OutputCodes NotificationServer::sendQueue(std::queue<Notification>* messages_que
     while (messages_queue->size())
     {
         if (!messages_queue->front().level < minimum_notification_level)       
-            notification_queue.push(messages_queue->front());
+            notification_queue.push(std::make_shared<Notification>(messages_queue->front()));
         messages_queue->pop();
     }
     lock.unlock();
@@ -46,7 +46,7 @@ OutputCodes NotificationServer::do_work()
         work_todo.wait(lock, [this] { return !notification_queue.empty() || stop; });
         if(stop) break;
 
-        std::queue<Notification> snapshot_queue = std::move(notification_queue);
+        std::queue<std::shared_ptr<Notification>> snapshot_queue = std::move(notification_queue);
         lock.unlock();
 
         try
@@ -56,10 +56,10 @@ OutputCodes NotificationServer::do_work()
                 while (snapshot_queue.size())
                 {
                     if (!log_file_path.empty())
-                        write_to_log(snapshot_queue.front());
+                        write_to_log(*snapshot_queue.front());
                     
                     if (!mqtt_address.empty())
-                        write_to_mqtt(snapshot_queue.front());
+                        write_to_mqtt(*snapshot_queue.front());
                     
                     snapshot_queue.pop();
                 }
