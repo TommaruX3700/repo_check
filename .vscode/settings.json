@@ -82,6 +82,7 @@
         "stop_token": "cpp",
         "thread": "cpp",
         "coroutine": "cpp",
-        "resumable": "cpp"
+        "resumable": "cpp",
+        "shared_mutex": "cpp"
     }
 }

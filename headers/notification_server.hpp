@@ -6,6 +6,7 @@
 #include <thread>
 #include <shared_mutex>
 #include <condition_variable>
+#include <chrono>
 // #include <functional>
 
 // Class that will asynchrounsluy produce notifications and send them to appropriate channels
@@ -35,10 +36,10 @@ private:
     std::queue<Notification>notification_queue;
 
     // manages access to queue
-    std::shared_mutex worker_mutex;
+    std::mutex worker_mutex;
     
     // manages the worker
-    bool started = false;
+    bool stop = false;
     std::condition_variable work_todo;
     
     OutputCodes do_work();
@@ -49,11 +50,9 @@ public:
         : worker(&NotificationServer::do_work, this) {}
     ~NotificationServer();
 
-    void start();
     OutputCodes send(Notification message);
     OutputCodes sendQueue(std::queue<Notification>* messages_queue);
-    // send set of message
-
+    
     void setLogFilePath(std::string log_file);
     void setMqttAddress(std::string mqtt);
 };
