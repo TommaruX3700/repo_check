@@ -14,14 +14,13 @@
 
 /*
     TODO:
-        - Creare un tread "worker" nel costruttore
-        - Se "start" non è a true, raccogli i log in queue ma non puoi inviarli
-        - creare un distruttore adeguato
+        ok - Creare un tread "worker" nel costruttore
+        ok - creare un distruttore adeguato
         ok - fare una queue per i messaggi
-        - fare metodo ESPOSTO al main send_notification() per aggiungere alla queue il messaggio
-        - mutex su queue
-        - condition_variable per triggerare il thread e leggere la queue
-        - thread accede alla queue per inviare i messaggi
+        ok - fare metodo ESPOSTO al main send_notification() per aggiungere alla queue il messaggio
+        ok - mutex su queue
+        ok - condition_variable per triggerare il thread e leggere la queue
+        ok - thread accede alla queue per inviare i messaggi
 */
 
 class NotificationServer
