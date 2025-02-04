@@ -40,6 +40,22 @@ enum NotificationLevels {
 
 #include <utility>
 #include <iostream>
+
+/*
+    CmdOutput
+        > defines the output code and verbose output of a cmd
+*/
 typedef std::pair<OutputCodes, std::string> CmdOutput;
+
+/*
+    Notification
+        > defines a notification, with level and string
+*/
+struct Notification
+{
+    NotificationLevels level;
+    std::string text;
+};
+
 
 #endif

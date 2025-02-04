@@ -28,6 +28,10 @@ int main(int argc, char* argv[])
             std::cout << "Configuration file provided at " << str_path << std::endl;
     }
     
+    /*
+        Start application setup:
+            > check configuration.json file format and retrive infos
+    */
     AppSetup* setup;
     setup = new AppSetup(str_path);
 
