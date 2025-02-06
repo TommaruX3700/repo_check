@@ -1,5 +1,6 @@
 
-// Collects cmds in a queue (cmd_pool) and runs them in a separate thread
+// Collects cmds in a queue (cmd_pool) and runs them
+// need to be sequentially executed in main() thread because these operations are sensitive.
 
 class Operations
 {

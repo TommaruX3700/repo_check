@@ -3,6 +3,9 @@
 #include <iostream>
 #include <cstdint>
 
+// CMD class
+// defines a cmd element
+
 class CMD
 {
 private:

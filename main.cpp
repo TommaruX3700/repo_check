@@ -30,7 +30,7 @@ int main(int argc, char* argv[])
     
     /*
         Start application setup:
-            > check configuration.json file format and retrive infos
+            ok > check configuration.json file format and retrive infos
     */
     AppSetup* setup;
     setup = new AppSetup(str_path);
@@ -45,10 +45,13 @@ int main(int argc, char* argv[])
     
     /*
         - Start watcher loop
-            > Start notification_server which will listen to notifications (maybe bind them to std behaviours).
-            > Start timer the same main.cpp thread, then wait till timeout and repeat loop
-            > handle closing keys
+            ok > Start notification_server which will listen to notifications (maybe bind them to std behaviours).
+            ok > Start timer the same main.cpp thread, then wait till timeout and repeat loop
+            > handle closing keyboard keys
             > do git ops as cmds
+
+        TODO:
+            > implement std::cout "override" to handle both notification and cmd stream
     */
 
     NotificationServer* notification_server = setup->GetNotificationServer();
@@ -60,6 +63,8 @@ int main(int argc, char* argv[])
         std::queue<CMD*> loop_cmd_queue = *cmd_queue;
 
         // pre-cmds
+        // operations.exec(setup.getPreCMDQueue);
+
         while (loop_cmd_queue.front()->GetExecOrder() < 0)
         {
             CMD* pre_cmd = loop_cmd_queue.front();
@@ -69,8 +74,10 @@ int main(int argc, char* argv[])
         }
         
         // git ops
+        // operations.exec(gitCMDQueue);
 
         // post-cmds
+        // operations.exec(setup.getCMDQueue);
         while (loop_cmd_queue.front())
         {
             CMD* cmd = loop_cmd_queue.front();
@@ -78,6 +85,8 @@ int main(int argc, char* argv[])
             cmd->Run();
             delete cmd;
         }
+
+        std::this_thread::sleep_for(std::chrono::seconds(STD_REFRESH_TIME_SECONDS));
     }
 
     std::cout << "Shutting down service . . ." << std::endl;
