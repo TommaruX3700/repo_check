@@ -1,9 +1,11 @@
 #include "notification_server.hpp"
 
 NotificationServer::NotificationServer(std::string _log_file_path, std::string _mqtt_address, NotificationLevels _notification_level)
-    : log_file_path { _log_file_path }, mqtt_address { _mqtt_address }, minimum_notification_level { _notification_level }
 {
-    
+    log_file_path = _log_file_path;
+    mqtt_address = _mqtt_address;
+    minimum_notification_level = _notification_level;
+    worker = std::thread(&NotificationServer::do_work, this);
 }
 
 NotificationServer::~NotificationServer()

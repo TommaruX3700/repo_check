@@ -50,8 +50,7 @@ private:
     OutputCodes write_to_mqtt(Notification message);
 
 public:
-    NotificationServer(std::string _log_file_path, std::string _mqtt_address, NotificationLevels _notification_level)
-        : worker(&NotificationServer::do_work, this) {}
+    NotificationServer(std::string _log_file_path, std::string _mqtt_address, NotificationLevels _notification_level);
     ~NotificationServer();
 
     OutputCodes send(Notification message);

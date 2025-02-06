@@ -42,6 +42,7 @@ enum NotificationLevels {
 #include <utility>
 #include <iostream>
 #include <chrono>
+#include <iomanip>
 
 /*
     CmdOutput
@@ -59,8 +60,8 @@ struct Notification
     std::string text;
 };
 
-
-std::string GetFormattedTime(const char* format)
+// inline definition helps the function not to be defined on multiple ocasions 
+inline std::string GetFormattedTime(const char* format)
 {
     if (format[0] == ' ' || sizeof(format)/sizeof(char*) == 0) format = "%T_%F";    
     auto now = std::chrono::system_clock::now();
