@@ -34,6 +34,7 @@ int main(int argc, char* argv[])
     */
     AppSetup* setup;
     setup = new AppSetup(str_path);
+    NotificationServer* notification_server = setup->GetNotificationServer();
 
     if (setup->StartSetup() != OK)
     {
@@ -53,9 +54,10 @@ int main(int argc, char* argv[])
         TODO:
             > implement std::cout "override" to handle both notification and cmd stream
     */
-
-    NotificationServer* notification_server = setup->GetNotificationServer();
+    
     std::queue<CMD*>* cmd_queue = setup->GetCmdQueue();
+    // Get git queue to execute every interactions.
+    // std::queue<CMD*>* git_cmd_queue = setup->GetGitCmdQueue();
 
     // main loop
     while (true)
@@ -86,6 +88,7 @@ int main(int argc, char* argv[])
             delete cmd;
         }
 
+        // questo basta e avanza senza la complessità inutile di una classe "timout"
         std::this_thread::sleep_for(std::chrono::seconds(STD_REFRESH_TIME_SECONDS));
     }
 
