@@ -9,13 +9,13 @@ TODO:
 
 int main(int argc, char* argv[]) 
 {
-    std::cout << "Repo_checker started! State: " << OK << std::endl;
+    CslMsg("Repo_checker started! State: " + OK);
 
     std::string str_path;
 
     if (argc != 2)
     {
-        std::cout << "No configuration file provided, loading local execution path . . ." << std::endl;
+        CslMsg("No configuration file provided, loading local execution path . . .");
         str_path = STANDARD_CONFIG_PATH;
     }
     else
@@ -23,9 +23,9 @@ int main(int argc, char* argv[])
         auto path = argv[1];
         str_path = path;
         if (str_path.empty()) 
-            std::cout << "No configuration file provided, loading execution path . . ." << std::endl;
+            CslMsg("No configuration file provided, loading execution path . . .");
         else
-            std::cout << "Configuration file provided at " << str_path << std::endl;
+            CslMsg("Configuration file provided at " + str_path);
     }
     
     /*
@@ -37,11 +37,11 @@ int main(int argc, char* argv[])
 
     if (setup->StartSetup() != OK)
     {
-        std::cout << "Unable to setup repository_watcher, check configuration.json file at " << str_path << std::endl;
+        CslMsg("Unable to setup repository_watcher, check configuration.json file at " + str_path);
         return ERROR;
     }  
     else
-        std::cout << "Setup done!" << std::endl;
+        CslMsg("Setup done!");
     
     /*
         - Start watcher loop
@@ -89,7 +89,7 @@ int main(int argc, char* argv[])
         std::this_thread::sleep_for(std::chrono::seconds(STD_REFRESH_TIME_SECONDS));
     }
 
-    std::cout << "Shutting down service . . ." << std::endl;
+    CslMsg("Shutting down service . . .");
 
     delete setup;
     delete notification_server;

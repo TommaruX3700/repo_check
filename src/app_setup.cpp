@@ -37,7 +37,8 @@ OutputCodes AppSetup::StartSetup()
     std::ifstream conf_file(configuration_file_path);
     if (!conf_file.is_open())
     {
-        std::cout << "Unable to open configuration file . . ." << std::endl;
+        
+        CslMsg("Unable to open configuration file . . .");
         return ERROR;
     }
 
@@ -49,7 +50,7 @@ OutputCodes AppSetup::StartSetup()
 
     if (conf_json.is_null() || conf_json.empty() || conf_json.size() == 0)
     {
-        std::cout << "Invalid configuration file . . ." << std::endl;
+        CslMsg("Invalid configuration file . . .");
         return ERROR;
     }
     configuration = conf_json;
@@ -57,7 +58,7 @@ OutputCodes AppSetup::StartSetup()
     // Read elements from configuration and setup private variables
     if (GetAndApplyConfiguration() == ERROR || GetAndApplyConfiguration() == CRITICAL_ERROR)
     {
-        std::cout << "Generic error on configuration.json, check file format. . ." << std::endl;
+        CslMsg("Generic error on configuration.json, check file format. . .");
         return ERROR;
     }  
 
@@ -65,7 +66,7 @@ OutputCodes AppSetup::StartSetup()
     notification_server = SetupNotificationServer();
     if (!notification_server)
     {
-        std::cout << "Couldn't setup Notifications server . . ." << std::endl;
+        CslMsg("Couldn't setup Notifications server . . .");
         return ERROR;
     }
 
@@ -77,37 +78,37 @@ OutputCodes AppSetup::GetAndApplyConfiguration()
     // Check, get and apply information from configuration json and return if its valid or not
     log_file_path = (configuration["log_file_path"] == "") ? STANDARD_LOG_FOLDER : configuration["log_file_path"];
     if (CreateLogFile() == WARNING)
-        std::cout << "Continuing without log file!" << std::endl;
+        CslMsg("Continuing without log file!");
 
     mqtt_server_address = (configuration["mqtt_server_address"] == "") ? STANDARD_MQTT_ADDRESS : configuration["mqtt_server_address"];
 
     refresh_time = (configuration["refresh_time"] == "") ? STANDARD_REFRESH_TIME : configuration["refresh_time"];
     if (CheckAndCorrectRefreshTime() == WARNING)
-        std::cout << "Invalid refresh_time found in configuration.json, using " << STANDARD_REFRESH_TIME << "instead!" << std::endl;
+        CslMsg("Invalid refresh_time found in configuration.json, using " + std::string(STANDARD_REFRESH_TIME) + " instead!");
     
     local_folder_path = (configuration["local_folder_path"] == "") ? "" : configuration["local_folder_path"];
     if(local_folder_path == "" || CheckLocalDir() != OK)
     {
-        std::cout << "Can't continue without a valid local_folder_path!" << std::endl;
+        CslMsg("Can't continue without a valid local_folder_path!");
         return ERROR;
     }
 
     remote_repository = (configuration["remote_repository"] == "") ? "" : configuration["remote_repository"];
     if(remote_repository == "" || CheckRemoteRepo() != OK)
     {
-        std::cout << "Can't continue without a valid remote_repository!" << std::endl;
+        CslMsg("Can't continue without a valid remote_repository!");
         return ERROR;
     }
 
     if (PopulateCmdQueues() != OK)
     {
-        std::cout << "Can't load user defined commands!" << std::endl;
+        CslMsg("Can't load user defined commands!");
         return ERROR;
     }
 
     if (CheckNotificationLevel() == WARNING)
     {
-        std::cout << "Can't load user defined notification_level! Using 'info' instead" << std::endl;
+        CslMsg("Can't load user defined notification_level! Using 'info' instead");
         notification_level = INFO;
     }
     
@@ -121,12 +122,12 @@ OutputCodes AppSetup::CreateLogFile()
     log_file_path.append(start_time);
     log_file_path.append(STANDARD_LOG_FILETYPE);
 
-    std::cout << "Writing logs to " << log_file_path << std::endl;
+    CslMsg("Writing logs to " + log_file_path);
 
     std::ofstream log_file(log_file_path);
     if (!log_file.is_open())
     {
-        std::cout << "Couldn't create log file!" << std::endl;
+        CslMsg("Couldn't create log file!");
         log_file.close();
         return WARNING;
     }
@@ -176,7 +177,7 @@ OutputCodes AppSetup::CheckAndCorrectRefreshTime()
         }
         else
         {
-            std::cout << "Character " << c << " not admitted in refresh_time";
+            CslMsg("Character " + std::string(1, c) + " not admitted in refresh_time");
             seconds_refresh_time += std::chrono::seconds(STD_REFRESH_TIME_SECONDS);
             return WARNING;
         }
@@ -190,7 +191,7 @@ OutputCodes AppSetup::CheckLocalDir()
     std::filesystem::directory_entry dir_to_check{local_folder_path};
     if (!dir_to_check.exists())
     {
-        std::cout << "Couldn't verify if the local path exists!";
+        CslMsg("Couldn't verify if the local path exists!");
         return ERROR;
     }
     return OK;
@@ -201,21 +202,21 @@ OutputCodes AppSetup::CheckRemoteRepo()
     // TODO: rework cmds with objects
     if (std::system("git -v") != OK)
     {
-        std::cout << "Git not found!" << std::endl;
+        CslMsg("Git not found!");
         return CRITICAL_ERROR;
     }
     
     if (std::system(("git -C" + local_folder_path + " remote -v").c_str()) != OK)
     {
-        std::cout << "No .git folder found! Trying to add remote. . ." << std::endl;
-        std::cout << "Try 1 . . ." << std::endl;
+        CslMsg("No .git folder found! Trying to add remote. . .");
+        CslMsg("Try 1 . . .");
         if (std::system(("git -C"+ local_folder_path + " remote add origin " + remote_repository).c_str()) != OK)
         {
-            std::cout << "Couldn't add any remote from " << remote_repository << std::endl;
-            std::cout << "Try 2 . . ." << std::endl;
+            CslMsg("Couldn't add any remote from " + remote_repository);
+            CslMsg("Try 2 . . .");
             if (std::system(("git -C" + local_folder_path + " init && git -C " + local_folder_path + " remote add origin " + remote_repository).c_str()) != OK)
             {
-                std::cout << "Failed also to initialize repo, check remote_repository and local_folder_path!" << std::endl;
+                CslMsg("Failed also to initialize repo, check remote_repository and local_folder_path!");
                 return ERROR;
             }
         }
@@ -223,7 +224,7 @@ OutputCodes AppSetup::CheckRemoteRepo()
 
     if(std::system(("git -C " + local_folder_path + " ls-remote").c_str()) != OK)
     {
-        std::cout << "Any remotes are present!" << std::endl;
+        CslMsg("Any remotes are present!");
         return ERROR;
     }
     return OK;
@@ -234,7 +235,7 @@ OutputCodes AppSetup::CheckNotificationLevel()
     char m_notification_level_char = configuration["notification_level"].get<std::string>()[0];
     if (m_notification_level_char == ' ')
     {
-        std::cout << "Couln't read notification_level character in configuration.json" << std::endl;
+        CslMsg("Couln't read notification_level character in configuration.json");
         return WARNING;
     }
     
@@ -250,7 +251,7 @@ OutputCodes AppSetup::CheckNotificationLevel()
             notification_level = DEBUG;
             break;
         default:
-            std::cout << "Invalid notification_level character in configuration.json." << std::endl;
+            CslMsg("Invalid notification_level character in configuration.json.");
             return WARNING;
             break;
     }

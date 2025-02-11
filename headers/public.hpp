@@ -71,4 +71,9 @@ inline std::string GetFormattedTime(const char* format)
     return  oss.str();
 }
 
+inline void CslMsg(std::string msg)
+{
+    std::cout << GetFormattedTime("") << ": " << msg << std::endl;
+}
+
 #endif

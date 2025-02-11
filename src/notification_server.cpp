@@ -80,7 +80,7 @@ OutputCodes NotificationServer::write_to_log(Notification message)
     log_file_stream.open(log_file_path, std::ios_base::app);
     if (!log_file_stream.is_open())
     {
-        std::cout << "Can't open log file stream at " << log_file_path << "!" << std::endl;
+        CslMsg("Can't open log file stream at " + log_file_path + "!");
         return WARNING;
     }
     
