@@ -22,7 +22,7 @@ public:
     CMD(int priority, std::string CMD_text, bool has_output);
     ~CMD();
 
-    CmdOutput Run();
+    static CmdOutput Run(std::string cmd);
     int GetExecOrder();
 };
 

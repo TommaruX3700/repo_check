@@ -209,21 +209,21 @@ OutputCodes AppSetup::CheckLocalDir()
 OutputCodes AppSetup::CheckRemoteRepo()
 {
     // TODO: rework cmds with objects
-    if (std::system("git -v") != OK)
+    if (CMD::Run("git -v").first != OK)
     {
         CslMsg("Git not found!");
         return CRITICAL_ERROR;
     }
     
-    if (std::system(("git -C" + local_folder_path + " remote -v").c_str()) != OK)
+    if (CMD::Run(("git -C" + local_folder_path + " remote -v").c_str()).first != OK)
     {
         CslMsg("No .git folder found! Trying to add remote. . .");
         CslMsg("Try 1 . . .");
-        if (std::system(("git -C"+ local_folder_path + " remote add origin " + remote_repository).c_str()) != OK)
+        if (CMD::Run(("git -C"+ local_folder_path + " remote add origin " + remote_repository).c_str()).first != OK)
         {
             CslMsg("Couldn't add any remote from " + remote_repository);
             CslMsg("Try 2 . . .");
-            if (std::system(("git -C" + local_folder_path + " init && git -C " + local_folder_path + " remote add origin " + remote_repository).c_str()) != OK)
+            if (CMD::Run(("git -C" + local_folder_path + " init && git -C " + local_folder_path + " remote add origin " + remote_repository).c_str()).first != OK)
             {
                 CslMsg("Failed also to initialize repo, check remote_repository and local_folder_path!");
                 return ERROR;
@@ -231,7 +231,7 @@ OutputCodes AppSetup::CheckRemoteRepo()
         }
     }
 
-    if(std::system(("git -C " + local_folder_path + " ls-remote").c_str()) != OK)
+    if(CMD::Run(("git -C " + local_folder_path + " ls-remote").c_str()).first != OK)
     {
         CslMsg("Any remotes are present!");
         return ERROR;
@@ -315,13 +315,6 @@ OutputCodes AppSetup::PopulateCmdQueues()
     git_commands_queue->push(git_cmd_3);
     CMD* git_cmd_4 = new CMD(PULL, "git pull origin main", true);
     git_commands_queue->push(git_cmd_4);
-
-    CMD* git_cmd_5 = new CMD(INIT, "git init", true);
-    git_commands_queue->push(git_cmd_5);
-    CMD* git_cmd_6 = new CMD(INIT, "git init", true);
-    git_commands_queue->push(git_cmd_6);
-    CMD* git_cmd_7 = new CMD(INIT, "git init", true);
-    git_commands_queue->push(git_cmd_7);
 
     return OK;
 }
