@@ -12,17 +12,6 @@
 
 // Class that will asynchrounsluy produce notifications and send them to appropriate channels
 
-/*
-    TODO:
-        ok - Creare un tread "worker" nel costruttore
-        ok - creare un distruttore adeguato
-        ok - fare una queue per i messaggi
-        ok - fare metodo ESPOSTO al main send_notification() per aggiungere alla queue il messaggio
-        ok - mutex su queue
-        ok - condition_variable per triggerare il thread e leggere la queue
-        ok - thread accede alla queue per inviare i messaggi
-*/
-
 class NotificationServer
 {
 private:
@@ -42,6 +31,8 @@ private:
     // manages the worker
     bool stop = false;
     std::condition_variable work_todo;
+
+    void checkCache();
     
     OutputCodes do_work();
     std::thread worker;
@@ -50,12 +41,13 @@ private:
     OutputCodes write_to_mqtt(Notification message);
 
 public:
-    NotificationServer(std::string _log_file_path, std::string _mqtt_address, NotificationLevels _notification_level);
+    NotificationServer();
     ~NotificationServer();
 
     OutputCodes send(Notification message);
-    OutputCodes sendQueue(std::queue<Notification>* messages_queue);
+    OutputCodes send(std::queue<Notification>* messages_queue);
     
+    void setMinimumNotificationLevel(NotificationLevels level);
     void setLogFilePath(std::string log_file);
     void setMqttAddress(std::string mqtt);
 };

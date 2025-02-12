@@ -9,6 +9,9 @@ TODO:
 
 int main(int argc, char* argv[]) 
 {
+    // Dichiaro prima Notification Server e inizio a fare cache dei messaggi
+    NotificationServer* notification_server = new NotificationServer()
+
     CslMsg("Repo_checker started! State: " + OK);
 
     std::string str_path;
@@ -28,10 +31,8 @@ int main(int argc, char* argv[])
             CslMsg("Configuration file provided at " + str_path);
     }
     
-    /*
-        Start application setup:
-            ok > check configuration.json file format and retrive infos
-    */
+
+    // Start application setup: check configuration.json file format and retrive infos
     AppSetup* setup;
     setup = new AppSetup(str_path);
     NotificationServer* notification_server = setup->GetNotificationServer();
