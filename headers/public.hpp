@@ -19,8 +19,8 @@ enum NotificationLevels {
 };
 
 enum TypeOfCmd {
-    GIT,
-    NOT_GIT
+    NOT_GIT,
+    GIT
 };
 
 enum TypeOfGitCmd {

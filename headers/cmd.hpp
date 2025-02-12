@@ -23,6 +23,7 @@ public:
     ~CMD();
 
     static CmdOutput Run(std::string cmd);
+    CmdOutput Run();
     int GetExecOrder();
 };
 
