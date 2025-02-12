@@ -2,6 +2,7 @@
 #include "notification_server.hpp"
 #include "cmd.hpp"
 #include "json.hpp"
+#include "operations.hpp"
 
 #include <iostream>
 #include <fstream>
