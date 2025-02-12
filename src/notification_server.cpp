@@ -27,6 +27,7 @@ void NotificationServer::checkCache()
 
 ///////////////////////////////////////////////////////////////
 // send() is to send notifications only to LOGs and other sources
+// send() should be the only wrappers to interact with notification_queue 
 
 OutputCodes NotificationServer::send(Notification message)
 {

@@ -35,7 +35,6 @@ private:
     NotificationLevels notification_level; //to_test
     NotificationServer* notification_server; //to_test
 
-    NotificationServer* SetupNotificationServer(); //to_test
     OutputCodes GetAndApplyConfiguration(); //to_test
     OutputCodes CreateLogFile(); //to_test
     OutputCodes CheckAndCorrectRefreshTime(); //to_test
@@ -45,16 +44,15 @@ private:
     OutputCodes PopulateCmdQueues(); //to_test
 
 public:
-    AppSetup(std::string conf_path); //to_test
+    AppSetup(std::string conf_path, NotificationServer* notification_srv); //to_test
     ~AppSetup(); //to_test
 
-    OutputCodes StartSetup(); //to_test + TODO: implement pre-log drop on notification server
+    OutputCodes StartSetup(); //to_test
 
     // Set&Get methods
     std::queue<CMD*>* GetCmdQueue(); 
     std::string GetLocalFolderPath(); 
-    std::string GetRemoteRepository(); 
-    NotificationServer* GetNotificationServer();
+    std::string GetRemoteRepository();
     NotificationLevels GetBaseNotificationLevel();
 };
 

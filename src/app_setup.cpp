@@ -1,12 +1,13 @@
 #include "app_setup.hpp"
 
-AppSetup::AppSetup(std::string conf_path)
+AppSetup::AppSetup(std::string conf_path, NotificationServer* notification_srv)
 {
     configuration.clear();
     log_file_path.clear();
     mqtt_server_address.clear();
     refresh_time.clear();
     configuration_file_path = conf_path;
+    notification_server = notification_srv;
     commands_queue = new std::queue<CMD*>;
 }
 
@@ -26,8 +27,6 @@ OutputCodes AppSetup::StartSetup()
 {
     /*
         TODO:
-        - start notification server as soon as possible and drop there all previus 
-            cached std::cout, according to NotificationLevel
         - use set methods to update later notification server attributes
     */
 
@@ -63,12 +62,14 @@ OutputCodes AppSetup::StartSetup()
     }  
 
     // Setup notification_server
-    notification_server = SetupNotificationServer();
     if (!notification_server)
     {
         CslMsg("Couldn't setup Notifications server . . .");
         return ERROR;
     }
+    notification_server->setLogFilePath(this->log_file_path);
+    notification_server->setMqttAddress(this->mqtt_server_address);
+    notification_server->setMinimumNotificationLevel(this->notification_level);
 
     return OK;
 }
@@ -291,14 +292,6 @@ OutputCodes AppSetup::PopulateCmdQueues()
     return OK;
 }
 
-NotificationServer* AppSetup::SetupNotificationServer()
-{
-    // Setup correctly the Notification Server and return the object if it was successfull
-    NotificationServer* notification_server;
-    notification_server = new NotificationServer(log_file_path, mqtt_server_address, notification_level);
-    return notification_server;
-}
-
 std::queue<CMD*>* AppSetup::GetCmdQueue()
 {
     return commands_queue;
@@ -312,11 +305,6 @@ std::string AppSetup::GetLocalFolderPath()
 std::string AppSetup::GetRemoteRepository()
 {
     return remote_repository;
-}
-
-NotificationServer* AppSetup::GetNotificationServer()
-{
-    return notification_server;
 }
 
 NotificationLevels AppSetup::GetBaseNotificationLevel()

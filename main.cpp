@@ -10,7 +10,7 @@ TODO:
 int main(int argc, char* argv[]) 
 {
     // Dichiaro prima Notification Server e inizio a fare cache dei messaggi
-    NotificationServer* notification_server = new NotificationServer()
+    NotificationServer* notification_server = new NotificationServer();
 
     CslMsg("Repo_checker started! State: " + OK);
 
@@ -34,8 +34,7 @@ int main(int argc, char* argv[])
 
     // Start application setup: check configuration.json file format and retrive infos
     AppSetup* setup;
-    setup = new AppSetup(str_path);
-    NotificationServer* notification_server = setup->GetNotificationServer();
+    setup = new AppSetup(str_path, notification_server);
 
     if (setup->StartSetup() != OK)
     {
