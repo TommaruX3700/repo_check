@@ -94,5 +94,8 @@
         "semaphore": "cpp",
         "text_encoding": "cpp",
         "variant": "cpp"
-    }
+    },
+    "idf.openOcdConfigs": [
+        "board/esp32c3-bridge.cfg"
+    ]
 }

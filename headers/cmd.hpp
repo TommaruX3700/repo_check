@@ -9,7 +9,10 @@
 class CMD
 {
 private:
+
+    // priority definisce in che ordine il comando deve venire eseguito.
     int priority;
+
     std::string CMD_text;
     bool has_output;
     std::string CMD_output;

@@ -30,7 +30,9 @@ private:
     std::chrono::seconds seconds_refresh_time; //to_test
     
     // Contains both pre-commands and normal ones: checked during runtime if there are any and executed untill .front().priority() >= 0
-    std::queue<CMD*>* commands_queue; //to_test
+    std::queue<CMD*>* pre_commands_queue; //to_test
+    std::queue<CMD*>* git_commands_queue; //to_test
+    std::queue<CMD*>* post_commands_queue; //to_test
 
     NotificationLevels notification_level; //to_test
     NotificationServer* notification_server; //to_test
@@ -50,7 +52,10 @@ public:
     OutputCodes StartSetup(); //to_test
 
     // Set&Get methods
-    std::queue<CMD*>* GetCmdQueue(); 
+    std::queue<CMD*>* GetPreCmdQueue(); 
+    std::queue<CMD*>* GetGitCmdQueue();
+    std::queue<CMD*>* GetPostCmdQueue(); 
+
     std::string GetLocalFolderPath(); 
     std::string GetRemoteRepository();
     NotificationLevels GetBaseNotificationLevel();

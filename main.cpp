@@ -1,15 +1,14 @@
 #include <iostream>
 #include "headers/app_setup.hpp"
+#include "operations.hpp"
 
 /*
 TODO: 
     - Add exception handling
-    - Make proper class to store all std::cout output and write them to a file to provide debug infos on program functionalities
 */
 
 int main(int argc, char* argv[]) 
 {
-    // Dichiaro prima Notification Server e inizio a fare cache dei messaggi
     NotificationServer* notification_server = new NotificationServer();
 
     CslMsg("Repo_checker started! State: " + OK);
@@ -46,48 +45,20 @@ int main(int argc, char* argv[])
     
     /*
         - Start watcher loop
-            ok > Start notification_server which will listen to notifications (maybe bind them to std behaviours).
-            ok > Start timer the same main.cpp thread, then wait till timeout and repeat loop
-            > handle closing keyboard keys
-            > do git ops as cmds
-
-        TODO:
-            > implement std::cout "override" to handle both notification and cmd stream
+            > handle closing keyboard keys (CTRL + C) and destroy proper resources
     */
     
-    std::queue<CMD*>* cmd_queue = setup->GetCmdQueue();
     // Get git queue to execute every interactions.
-    // std::queue<CMD*>* git_cmd_queue = setup->GetGitCmdQueue();
+    std::queue<CMD*>* git_cmd_queue = setup->GetGitCmdQueue();
+
+    Operations* ops = new Operations();
 
     // main loop
     while (true)
     {
-        std::queue<CMD*> loop_cmd_queue = *cmd_queue;
-
-        // pre-cmds
-        // operations.exec(setup.getPreCMDQueue);
-
-        while (loop_cmd_queue.front()->GetExecOrder() < 0)
-        {
-            CMD* pre_cmd = loop_cmd_queue.front();
-            loop_cmd_queue.pop();
-            pre_cmd->Run();
-            delete pre_cmd;
-        }
-        
-        // git ops
-        // operations.exec(gitCMDQueue);
-
-        // post-cmds
-        // operations.exec(setup.getCMDQueue);
-        while (loop_cmd_queue.front())
-        {
-            CMD* cmd = loop_cmd_queue.front();
-            loop_cmd_queue.pop();
-            cmd->Run();
-            delete cmd;
-        }
-
+        ops->exec(setup->GetPreCmdQueue(), NOT_GIT);
+        ops->exec(setup->GetGitCmdQueue(), GIT);
+        ops->exec(setup->GetPostCmdQueue(), NOT_GIT);
         // questo basta e avanza senza la complessità inutile di una classe "timout"
         std::this_thread::sleep_for(std::chrono::seconds(STD_REFRESH_TIME_SECONDS));
     }
@@ -96,6 +67,5 @@ int main(int argc, char* argv[])
 
     delete setup;
     delete notification_server;
-    delete cmd_queue;
     return OK;
 }

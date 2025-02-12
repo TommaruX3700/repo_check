@@ -18,6 +18,20 @@ enum NotificationLevels {
     DEBUG
 };
 
+enum TypeOfCmd {
+    GIT,
+    NOT_GIT
+};
+
+enum TypeOfGitCmd {
+    CD,
+    REV_PARSE,
+    INIT,
+    REMOTE_ADD,
+    PULL
+
+};
+
 #ifdef _WIN32
     #define OS_SEP "\\"
 #endif

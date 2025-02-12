@@ -8,7 +8,9 @@ AppSetup::AppSetup(std::string conf_path, NotificationServer* notification_srv)
     refresh_time.clear();
     configuration_file_path = conf_path;
     notification_server = notification_srv;
-    commands_queue = new std::queue<CMD*>;
+    pre_commands_queue = new std::queue<CMD*>;
+    git_commands_queue = new std::queue<CMD*>;
+    post_commands_queue = new std::queue<CMD*>;
 }
 
 AppSetup::~AppSetup()
@@ -17,9 +19,15 @@ AppSetup::~AppSetup()
     log_file_path.clear();
     mqtt_server_address.clear();
     refresh_time.clear();
-    while (commands_queue->size())
-        commands_queue->pop();
-    delete commands_queue;
+    while (pre_commands_queue->size())
+        pre_commands_queue->pop();
+    delete pre_commands_queue;
+    while (git_commands_queue->size())
+        git_commands_queue->pop();
+    delete git_commands_queue;
+    while (post_commands_queue->size())
+        post_commands_queue->pop();
+    delete post_commands_queue;
     delete notification_server;
 }
 
@@ -286,15 +294,51 @@ OutputCodes AppSetup::PopulateCmdQueues()
     }
 
     // convert the vector to queue
+    std::sort(temp_CMD_vector.begin(), temp_CMD_vector.end(), [](CMD* a, CMD* b) {return a->GetExecOrder() < b->GetExecOrder();});
+
     for (CMD* vector_CMD : temp_CMD_vector)
-        commands_queue->push(vector_CMD);
+    {
+        if (vector_CMD->GetExecOrder() < 0)
+            pre_commands_queue->push(vector_CMD);
+        else
+            post_commands_queue->push(vector_CMD);
+    }
     
+    // base git ops
+    CMD* git_cmd_0 = new CMD(CD, "cd " + local_folder_path, true);
+    git_commands_queue->push(git_cmd_0);
+    CMD* git_cmd_1 = new CMD(REV_PARSE, "git rev-parse --is-inside-work-tree", true);
+    git_commands_queue->push(git_cmd_1);
+    CMD* git_cmd_2 = new CMD(INIT, "git init", true);
+    git_commands_queue->push(git_cmd_2);
+    CMD* git_cmd_3 = new CMD(REMOTE_ADD, "git remote add origin " + remote_repository, true);
+    git_commands_queue->push(git_cmd_3);
+    CMD* git_cmd_4 = new CMD(PULL, "git pull origin main", true);
+    git_commands_queue->push(git_cmd_4);
+
+    CMD* git_cmd_5 = new CMD(INIT, "git init", true);
+    git_commands_queue->push(git_cmd_5);
+    CMD* git_cmd_6 = new CMD(INIT, "git init", true);
+    git_commands_queue->push(git_cmd_6);
+    CMD* git_cmd_7 = new CMD(INIT, "git init", true);
+    git_commands_queue->push(git_cmd_7);
+
     return OK;
 }
 
-std::queue<CMD*>* AppSetup::GetCmdQueue()
+std::queue<CMD*>* AppSetup::GetPreCmdQueue()
 {
-    return commands_queue;
+    return pre_commands_queue;
+}
+
+std::queue<CMD*>* AppSetup::GetGitCmdQueue()
+{
+    return git_commands_queue;
+}
+
+std::queue<CMD*>* AppSetup::GetPostCmdQueue()
+{
+    return post_commands_queue;
 }
 
 std::string AppSetup::GetLocalFolderPath()
