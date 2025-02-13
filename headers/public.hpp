@@ -75,9 +75,6 @@ struct Notification
     std::string text;
 };
 
-// Cached messages, ovvero messaggi che aspettano di venir trasmessi
-std::queue<Notification> cacheMsg;
-
 // inline definition helps the function not to be defined on multiple ocasions 
 inline std::string GetFormattedTime(const char* format)
 {
@@ -87,14 +84,6 @@ inline std::string GetFormattedTime(const char* format)
     std::ostringstream oss;
     oss << std::put_time(std::localtime(&in_time_t), format);
     return  oss.str();
-}
-
-// CslMsg is to send console messages. If minimum not. level is DEBUG, also them will be displayed in logs
-inline void CslMsg(std::string msg)
-{
-    std::string formattedMsg = GetFormattedTime("") + ": " + msg;
-    std::cout << formattedMsg << std::endl;
-    cacheMsg.push({DEBUG, formattedMsg});
 }
 
 #endif

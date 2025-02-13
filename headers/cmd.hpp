@@ -1,4 +1,8 @@
+#ifndef CMD_HPP
+#define CMD_HPP
+
 #include "public.hpp"
+#include "notification_server.hpp"
 
 #include <iostream>
 #include <cstdint>
@@ -27,4 +31,5 @@ public:
     int GetExecOrder();
 };
 
+#endif
 

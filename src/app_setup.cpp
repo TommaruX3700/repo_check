@@ -45,7 +45,7 @@ OutputCodes AppSetup::StartSetup()
     if (!conf_file.is_open())
     {
         
-        CslMsg("Unable to open configuration file . . .");
+        NotificationServer::send("Unable to open configuration file . . .");
         return ERROR;
     }
 
@@ -57,7 +57,7 @@ OutputCodes AppSetup::StartSetup()
 
     if (conf_json.is_null() || conf_json.empty() || conf_json.size() == 0)
     {
-        CslMsg("Invalid configuration file . . .");
+        NotificationServer::send("Invalid configuration file . . .");
         return ERROR;
     }
     configuration = conf_json;
@@ -65,14 +65,14 @@ OutputCodes AppSetup::StartSetup()
     // Read elements from configuration and setup private variables
     if (GetAndApplyConfiguration() == ERROR || GetAndApplyConfiguration() == CRITICAL_ERROR)
     {
-        CslMsg("Generic error on configuration.json, check file format. . .");
+        NotificationServer::send("Generic error on configuration.json, check file format. . .");
         return ERROR;
     }  
 
     // Setup notification_server
     if (!notification_server)
     {
-        CslMsg("Couldn't setup Notifications server . . .");
+        NotificationServer::send("Couldn't setup Notifications server . . .");
         return ERROR;
     }
     notification_server->setLogFilePath(this->log_file_path);
@@ -87,37 +87,37 @@ OutputCodes AppSetup::GetAndApplyConfiguration()
     // Check, get and apply information from configuration json and return if its valid or not
     log_file_path = (configuration["log_file_path"] == "") ? STANDARD_LOG_FOLDER : configuration["log_file_path"];
     if (CreateLogFile() == WARNING)
-        CslMsg("Continuing without log file!");
+        NotificationServer::send("Continuing without log file!");
 
     mqtt_server_address = (configuration["mqtt_server_address"] == "") ? STANDARD_MQTT_ADDRESS : configuration["mqtt_server_address"];
 
     refresh_time = (configuration["refresh_time"] == "") ? STANDARD_REFRESH_TIME : configuration["refresh_time"];
     if (CheckAndCorrectRefreshTime() == WARNING)
-        CslMsg("Invalid refresh_time found in configuration.json, using " + std::string(STANDARD_REFRESH_TIME) + " instead!");
+        NotificationServer::send("Invalid refresh_time found in configuration.json, using " + std::string(STANDARD_REFRESH_TIME) + " instead!");
     
     local_folder_path = (configuration["local_folder_path"] == "") ? "" : configuration["local_folder_path"];
     if(local_folder_path == "" || CheckLocalDir() != OK)
     {
-        CslMsg("Can't continue without a valid local_folder_path!");
+        NotificationServer::send("Can't continue without a valid local_folder_path!");
         return ERROR;
     }
 
     remote_repository = (configuration["remote_repository"] == "") ? "" : configuration["remote_repository"];
     if(remote_repository == "" || CheckRemoteRepo() != OK)
     {
-        CslMsg("Can't continue without a valid remote_repository!");
+        NotificationServer::send("Can't continue without a valid remote_repository!");
         return ERROR;
     }
 
     if (PopulateCmdQueues() != OK)
     {
-        CslMsg("Can't load user defined commands!");
+        NotificationServer::send("Can't load user defined commands!");
         return ERROR;
     }
 
     if (CheckNotificationLevel() == WARNING)
     {
-        CslMsg("Can't load user defined notification_level! Using 'info' instead");
+        NotificationServer::send("Can't load user defined notification_level! Using 'info' instead");
         notification_level = INFO;
     }
     
@@ -131,12 +131,12 @@ OutputCodes AppSetup::CreateLogFile()
     log_file_path.append(start_time);
     log_file_path.append(STANDARD_LOG_FILETYPE);
 
-    CslMsg("Writing logs to " + log_file_path);
+    NotificationServer::send("Writing logs to " + log_file_path);
 
     std::ofstream log_file(log_file_path);
     if (!log_file.is_open())
     {
-        CslMsg("Couldn't create log file!");
+        NotificationServer::send("Couldn't create log file!");
         log_file.close();
         return WARNING;
     }
@@ -186,7 +186,7 @@ OutputCodes AppSetup::CheckAndCorrectRefreshTime()
         }
         else
         {
-            CslMsg("Character " + std::string(1, c) + " not admitted in refresh_time");
+            NotificationServer::send("Character " + std::string(1, c) + " not admitted in refresh_time");
             seconds_refresh_time += std::chrono::seconds(STD_REFRESH_TIME_SECONDS);
             return WARNING;
         }
@@ -200,7 +200,7 @@ OutputCodes AppSetup::CheckLocalDir()
     std::filesystem::directory_entry dir_to_check{local_folder_path};
     if (!dir_to_check.exists())
     {
-        CslMsg("Couldn't verify if the local path exists!");
+        NotificationServer::send("Couldn't verify if the local path exists!");
         return ERROR;
     }
     return OK;
@@ -211,21 +211,21 @@ OutputCodes AppSetup::CheckRemoteRepo()
     // TODO: rework cmds with objects
     if (CMD::Run("git -v").first != OK)
     {
-        CslMsg("Git not found!");
+        NotificationServer::send("Git not found!");
         return CRITICAL_ERROR;
     }
     
     if (CMD::Run(("git -C" + local_folder_path + " remote -v").c_str()).first != OK)
     {
-        CslMsg("No .git folder found! Trying to add remote. . .");
-        CslMsg("Try 1 . . .");
+        NotificationServer::send("No .git folder found! Trying to add remote. . .");
+        NotificationServer::send("Try 1 . . .");
         if (CMD::Run(("git -C"+ local_folder_path + " remote add origin " + remote_repository).c_str()).first != OK)
         {
-            CslMsg("Couldn't add any remote from " + remote_repository);
-            CslMsg("Try 2 . . .");
+            NotificationServer::send("Couldn't add any remote from " + remote_repository);
+            NotificationServer::send("Try 2 . . .");
             if (CMD::Run(("git -C" + local_folder_path + " init && git -C " + local_folder_path + " remote add origin " + remote_repository).c_str()).first != OK)
             {
-                CslMsg("Failed also to initialize repo, check remote_repository and local_folder_path!");
+                NotificationServer::send("Failed also to initialize repo, check remote_repository and local_folder_path!");
                 return ERROR;
             }
         }
@@ -233,7 +233,7 @@ OutputCodes AppSetup::CheckRemoteRepo()
 
     if(CMD::Run(("git -C " + local_folder_path + " ls-remote").c_str()).first != OK)
     {
-        CslMsg("Any remotes are present!");
+        NotificationServer::send("Any remotes are present!");
         return ERROR;
     }
     return OK;
@@ -244,7 +244,7 @@ OutputCodes AppSetup::CheckNotificationLevel()
     char m_notification_level_char = configuration["notification_level"].get<std::string>()[0];
     if (m_notification_level_char == ' ')
     {
-        CslMsg("Couln't read notification_level character in configuration.json");
+        NotificationServer::send("Couln't read notification_level character in configuration.json");
         return WARNING;
     }
     
@@ -260,7 +260,7 @@ OutputCodes AppSetup::CheckNotificationLevel()
             notification_level = DEBUG;
             break;
         default:
-            CslMsg("Invalid notification_level character in configuration.json.");
+            NotificationServer::send("Invalid notification_level character in configuration.json.");
             return WARNING;
             break;
     }

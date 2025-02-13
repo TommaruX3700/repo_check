@@ -11,13 +11,13 @@ int main(int argc, char* argv[])
 {
     NotificationServer* notification_server = new NotificationServer();
 
-    CslMsg("Repo_checker started! State: " + OK);
+    NotificationServer::send("Repo_checker started! State: " + OK);
 
     std::string str_path;
 
     if (argc != 2)
     {
-        CslMsg("No configuration file provided, loading local execution path . . .");
+        NotificationServer::send("No configuration file provided, loading local execution path . . .");
         str_path = STANDARD_CONFIG_PATH;
     }
     else
@@ -25,9 +25,9 @@ int main(int argc, char* argv[])
         auto path = argv[1];
         str_path = path;
         if (str_path.empty()) 
-            CslMsg("No configuration file provided, loading execution path . . .");
+            NotificationServer::send("No configuration file provided, loading execution path . . .");
         else
-            CslMsg("Configuration file provided at " + str_path);
+            NotificationServer::send("Configuration file provided at " + str_path);
     }
     
 
@@ -37,11 +37,11 @@ int main(int argc, char* argv[])
 
     if (setup->StartSetup() != OK)
     {
-        CslMsg("Unable to setup repository_watcher, check configuration.json file at " + str_path);
+        NotificationServer::send("Unable to setup repository_watcher, check configuration.json file at " + str_path);
         return ERROR;
     }  
     else
-        CslMsg("Setup done!");
+        NotificationServer::send("Setup done!");
     
     /*
         - Start watcher loop
@@ -59,11 +59,11 @@ int main(int argc, char* argv[])
         ops->exec(setup->GetPreCmdQueue(), NOT_GIT);
         ops->exec(setup->GetGitCmdQueue(), GIT);
         ops->exec(setup->GetPostCmdQueue(), NOT_GIT);
-        // questo basta e avanza senza la complessità inutile di una classe "timout"
+        notification_server->pushLogs();
         std::this_thread::sleep_for(std::chrono::seconds(STD_REFRESH_TIME_SECONDS));
     }
 
-    CslMsg("Shutting down service . . .");
+    NotificationServer::send("Shutting down service . . .");
 
     delete setup;
     delete notification_server;

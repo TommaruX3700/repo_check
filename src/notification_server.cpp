@@ -12,23 +12,26 @@ NotificationServer::~NotificationServer()
 }
 
 // Check cached Messages from the rest of the project, if there are any and with the right level, add them to logs
+// Ho bisogno di ri-dichiarare la variabile statica
+std::queue<Notification> NotificationServer::cachedMsg;
 void NotificationServer::checkCache()
 {
-    if (cacheMsg.size())
+    if (cachedMsg.size())
     {
-        while (cacheMsg.size())
+        while (cachedMsg.size())
         {
-            if (!cacheMsg.front().level < minimum_notification_level)
-                notification_queue.push(std::make_shared<Notification>(cacheMsg.front()));
-            cacheMsg.pop();
+            if (!cachedMsg.front().level < minimum_notification_level)
+                notification_queue.push(std::make_shared<Notification>(cachedMsg.front()));
+            cachedMsg.pop();
         }
     }
 }
 
 ///////////////////////////////////////////////////////////////
-// send() is to send notifications only to LOGs and other sources
+// send() is to send notifications to LOGs and other sources and also to write to console
 // send() should be the only wrappers to interact with notification_queue 
 
+// TODO: remove unecessary OutputCodes
 OutputCodes NotificationServer::send(Notification message)
 {
     if (message.level < minimum_notification_level) return OK;
@@ -36,10 +39,10 @@ OutputCodes NotificationServer::send(Notification message)
     checkCache();
     notification_queue.push(std::make_shared<Notification>(message));
     lock.unlock();
-    work_todo.notify_one();
     return OK;
 }
 
+// TODO: remove unecessary OutputCodes
 OutputCodes NotificationServer::send(std::queue<Notification>* messages_queue)
 {   
     std::unique_lock lock(worker_mutex);
@@ -51,10 +54,23 @@ OutputCodes NotificationServer::send(std::queue<Notification>* messages_queue)
         messages_queue->pop();
     }
     lock.unlock();
-    work_todo.notify_one();
     return OK;
 }
+
+void NotificationServer::send(std::string msg)
+{
+    std::string formattedMsg = GetFormattedTime("") + ": " + msg;
+    std::cout << formattedMsg << std::endl;
+    cachedMsg.push({DEBUG, formattedMsg});
+}
+
 ///////////////////////////////////////////////////////////////
+
+// This is used to start the log thread
+void NotificationServer::pushLogs()
+{
+    work_todo.notify_one();
+}
 
 OutputCodes NotificationServer::do_work()
 {
@@ -103,7 +119,7 @@ OutputCodes NotificationServer::write_to_log(Notification message)
     log_file_stream.open(log_file_path, std::ios_base::app);
     if (!log_file_stream.is_open())
     {
-        CslMsg("Can't open log file stream at " + log_file_path + "!");
+        send("Can't open log file stream at " + log_file_path + "!");
         return WARNING;
     }
     

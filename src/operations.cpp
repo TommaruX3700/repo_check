@@ -40,16 +40,16 @@ OutputCodes Operations::exec(std::queue<CMD*>* cmd_queue, TypeOfCmd isGit)
                 {
                     if (StoreInit->Run().first != OK)
                     {
-                        CslMsg("Can´t initiate proper git folder!");
+                        NotificationServer::send("Can´t initiate proper git folder!");
                         return ERROR;
                     }
                     if (StoreRemoteAdd->Run().first != OK)
                     {
-                        CslMsg("Can´t add remote!");
+                        NotificationServer::send("Can´t add remote!");
                         return ERROR;
                     }
                 }
-                CslMsg(out.second);
+                NotificationServer::send(out.second);
             }
             else if (cmd_queue->front()->GetExecOrder() == PULL)
             {
@@ -58,11 +58,11 @@ OutputCodes Operations::exec(std::queue<CMD*>* cmd_queue, TypeOfCmd isGit)
                 {
                     return ERROR;
                 }
-                CslMsg(out.second);
+                NotificationServer::send(out.second);
             }
             else
             {
-                CslMsg(cmd_queue->front()->Run().second);
+                NotificationServer::send(cmd_queue->front()->Run().second);
             }
             cmd_queue->pop();
         }
@@ -71,7 +71,7 @@ OutputCodes Operations::exec(std::queue<CMD*>* cmd_queue, TypeOfCmd isGit)
     {
         while (cmd_queue->size())
         {
-            CslMsg(cmd_queue->front()->Run().second);
+            NotificationServer::send(cmd_queue->front()->Run().second);
             cmd_queue->pop();
         }
     }
