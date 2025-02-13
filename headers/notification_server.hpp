@@ -11,7 +11,6 @@
 #include <condition_variable>
 #include <chrono>
 #include <fstream>
-// #include <functional>
 
 // Class that will asynchrounsluy produce notifications and send them to appropriate channels
 
